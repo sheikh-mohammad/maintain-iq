@@ -200,12 +200,6 @@
   margin-bottom: 1.5rem;
   display: flex;
   align-items: flex-start;
-  justify-content: space-between;
-  gap: 1rem;
-}
-
-.admin-page-header-left {
-  display: flex;
   flex-direction: column;
   gap: 0.25rem;
 }
@@ -224,8 +218,7 @@
 }
 
 .admin-page-header .btn {
-  white-space: nowrap;
-  flex-shrink: 0;
+  margin-top: 0.75rem;
 }
 
 /* --- Stat Cards --- */
@@ -543,10 +536,6 @@ select.form-input {
 
   .stats-cards {
     grid-template-columns: 1fr 1fr;
-  }
-
-  .admin-page-header {
-    flex-wrap: wrap;
   }
 
   .admin-page-header .btn {
