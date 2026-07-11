@@ -449,8 +449,31 @@
 
 /* ===== Responsive ===== */
 
+@media (max-width: 768px) {
+  .asset-detail-meta {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+  }
+  .asset-detail-header {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  .asset-detail-history {
+    padding: 0 0.5rem;
+  }
+}
+
 @media (max-width: 640px) {
   .public-assets-grid {
     grid-template-columns: 1fr;
+  }
+  .asset-detail-card {
+    padding: 1.25rem;
+  }
+  .asset-detail-meta {
+    grid-template-columns: 1fr;
+  }
+  .asset-detail-header h2 {
+    font-size: 1.25rem;
   }
 }

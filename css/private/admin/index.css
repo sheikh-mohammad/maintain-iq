@@ -711,4 +711,83 @@ select.form-input {
   .admin-page-header .btn {
     width: 100%;
   }
+
+  /* Table horizontal scroll */
+  .admin-table-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .admin-table {
+    min-width: 600px;
+  }
+
+  /* Modal fullscreen on mobile */
+  .modal {
+    max-width: 100%;
+    margin: 0 0.5rem;
+    max-height: 85vh;
+  }
+}
+
+@media (max-width: 480px) {
+  .stats-cards {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-topbar {
+    padding: 0.75rem 1rem;
+  }
+
+  .admin-page-header h3 {
+    font-size: 1.25rem;
+  }
+
+  .admin-table td,
+  .admin-table th {
+    padding: 0.75rem 0.875rem;
+    font-size: 0.8125rem;
+  }
+
+  .admin-status-select {
+    max-width: 120px;
+    font-size: 0.75rem;
+  }
+
+  /* Better stat cards on tiny screens */
+  .stat-card {
+    padding: 1rem;
+  }
+
+  .stat-card-value {
+    font-size: 1.5rem;
+  }
+
+  .modal {
+    margin: 0 0.25rem;
+    border-radius: 12px;
+  }
+
+  .modal-body {
+    padding: 1rem;
+  }
+
+  .modal-header {
+    padding: 1rem;
+  }
+
+  .modal-header h3 {
+    font-size: 1rem;
+  }
+
+  .modal-footer {
+    padding: 1rem;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .modal-footer .btn {
+    width: 100%;
+    justify-content: center;
+  }
 }

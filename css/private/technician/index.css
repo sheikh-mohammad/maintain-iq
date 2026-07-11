@@ -404,4 +404,36 @@
     flex-direction: column;
     gap: 0;
   }
+  .tech-table-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .tech-table {
+    min-width: 500px;
+  }
+}
+
+@media (max-width: 480px) {
+  .tech-stats-cards {
+    grid-template-columns: 1fr;
+  }
+  .tech-topbar {
+    padding: 0.75rem 1rem;
+  }
+  .tech-form-card {
+    padding: 1.25rem;
+  }
+  .tech-form-submit {
+    width: 100%;
+  }
+
+  .tech-table td,
+  .tech-table th {
+    padding: 0.75rem 0.75rem;
+    font-size: 0.8125rem;
+  }
+
+  .tech-page-header h3 {
+    font-size: 1.125rem;
+  }
 }

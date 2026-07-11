@@ -118,6 +118,32 @@
   text-decoration: underline;
 }
 
+/* ===== Responsive ===== */
+
+@media (max-width: 480px) {
+  .auth-card {
+    padding: 1.75rem 1.25rem;
+  }
+
+  .auth-header h1 {
+    font-size: 1.25rem;
+  }
+
+  .auth-header p {
+    font-size: 0.8125rem;
+  }
+
+  .auth-form .form-input {
+    padding: 0.625rem 0.875rem;
+    font-size: 0.875rem;
+  }
+
+  .auth-submit {
+    padding: 0.75rem;
+    font-size: 0.9375rem;
+  }
+}
+
 /* ── Form Messages (error / success) ─────────────────────────────────── */
 
 .form-message {
