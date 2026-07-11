@@ -2,45 +2,40 @@
    MaintainIQ - Public Asset Page Styles
    ========================================================================== */
 
-.asset-detail-section {
+.public-assets-section {
   padding: 6rem 0 4rem;
   min-height: calc(100vh - var(--header-height));
-  display: flex;
-  align-items: center;
 }
 
-.asset-breadcrumb {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 2rem;
-  font-size: 0.875rem;
+.public-assets-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.public-assets-header h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text-white);
+  margin: 0 0 0.5rem;
+}
+
+.public-assets-header p {
+  font-size: 0.9375rem;
   color: var(--text-gray-400);
+  margin: 0;
 }
 
-.asset-breadcrumb a {
-  color: var(--text-gray-400);
-  text-decoration: none;
-  transition: color var(--transition-fast);
-}
+/* ===== Loading & Empty States ===== */
 
-.asset-breadcrumb a:hover {
-  color: var(--accent-emerald);
-}
-
-.asset-breadcrumb span {
-  color: var(--text-gray-500);
-}
-
-/* --- Empty State --- */
-.asset-empty-state {
+.public-assets-loading,
+.public-assets-empty {
   text-align: center;
   padding: 4rem 2rem;
   max-width: 480px;
   margin: 0 auto;
 }
 
-.empty-state-icon {
+.public-assets-empty-icon {
   width: 80px;
   height: 80px;
   margin: 0 auto 1.5rem;
@@ -53,21 +48,129 @@
   color: var(--text-gray-500);
 }
 
-.empty-state-icon svg {
+.public-assets-empty-icon svg {
   width: 36px;
   height: 36px;
 }
 
-.asset-empty-state h2 {
+.public-assets-empty h2 {
   font-size: 1.5rem;
   font-weight: 600;
   color: var(--text-white);
-  margin-bottom: 0.75rem;
+  margin: 0 0 0.75rem;
 }
 
-.asset-empty-state p {
+.public-assets-empty p {
   font-size: 0.9375rem;
   color: var(--text-gray-400);
   line-height: 1.6;
-  margin-bottom: 2rem;
+  margin: 0 0 2rem;
+}
+
+.public-assets-loading p {
+  color: var(--text-gray-400);
+  font-size: 1rem;
+}
+
+/* ===== Assets Grid ===== */
+
+.public-assets-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.25rem;
+}
+
+.public-asset-card {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+  border-radius: 14px;
+  padding: 1.5rem;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.public-asset-card:hover {
+  border-color: var(--border-active);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+}
+
+.public-asset-card.highlighted {
+  border-color: var(--accent-emerald);
+  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
+}
+
+.public-asset-top {
+  width: 100%;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.public-asset-info {
+  text-align: left;
+  min-width: 0;
+}
+
+.public-asset-info h3 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--text-white);
+  margin: 0 0 0.2rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.public-asset-code {
+  font-size: 0.8125rem;
+  color: var(--text-gray-500);
+  font-family: monospace;
+}
+
+.public-asset-meta {
+  width: 100%;
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  font-size: 0.875rem;
+  color: var(--text-gray-400);
+  margin-bottom: 0.5rem;
+}
+
+.public-asset-meta strong {
+  color: var(--text-gray-300);
+  font-weight: 500;
+}
+
+.public-asset-tech {
+  font-size: 0.8125rem;
+  color: var(--text-gray-500);
+  margin-bottom: 0.75rem;
+}
+
+.public-asset-qr {
+  display: flex;
+  justify-content: center;
+  margin-top: 0.75rem;
+}
+
+.public-asset-qr canvas,
+.public-asset-qr img {
+  border-radius: 8px;
+  padding: 6px;
+  background: #fff;
+}
+
+/* ===== Responsive ===== */
+
+@media (max-width: 640px) {
+  .public-assets-grid {
+    grid-template-columns: 1fr;
+  }
 }

@@ -5,8 +5,8 @@
   <script>!function(){var t=localStorage.getItem('maintainiq-theme');if(!t&&(t=window.matchMedia('(prefers-color-scheme:light)').matches?'light':'dark'),'light'===t)document.documentElement.setAttribute('data-theme','light')}();</script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Asset Details | MaintainIQ</title>
-  <meta name="description" content="Public asset details and issue reporting for MaintainIQ." />
+  <title>Assets | MaintainIQ</title>
+  <meta name="description" content="Public asset listing for MaintainIQ." />
   <link rel="stylesheet" href="../../css/style.css" />
   <link rel="stylesheet" href="../../css/index.css" />
   <link rel="stylesheet" href="../../css/public/index.css" />
@@ -43,10 +43,8 @@
           </svg>
         </button>
         <a href="../../index.html" class="btn btn-emerald">Back to Home</a>
-        <button class="mobile-menu-toggle" id="mobile-menu-toggle" aria-label="Toggle Mobile Menu"
-          aria-expanded="false">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-            stroke-linecap="round" stroke-linejoin="round" style="width: 24px; height: 24px;">
+        <button class="mobile-menu-toggle" id="mobile-menu-toggle" aria-label="Toggle Mobile Menu" aria-expanded="false">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 24px; height: 24px;">
             <line x1="3" y1="12" x2="21" y2="12" id="line-mid"></line>
             <line x1="3" y1="6" x2="21" y2="6" id="line-top"></line>
             <line x1="3" y1="18" x2="21" y2="18" id="line-bot"></line>
@@ -62,16 +60,14 @@
     <div class="mobile-drawer-header">
       <a href="../../index.html" class="logo" id="drawer-logo">
         <div class="logo-icon" aria-hidden="true">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-            stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 18px; height: 18px;">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 18px; height: 18px;">
             <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
           </svg>
         </div>
         MaintainIQ
       </a>
       <button class="mobile-menu-close" id="mobile-menu-close" aria-label="Close Mobile Menu">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-          stroke-linecap="round" stroke-linejoin="round" style="width: 24px; height: 24px;">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 24px; height: 24px;">
           <line x1="18" y1="6" x2="6" y2="18"></line>
           <line x1="6" y1="6" x2="18" y2="18"></line>
         </svg>
@@ -105,32 +101,35 @@
   </div>
 
   <main>
-    <section class="asset-detail-section" id="asset-detail">
+    <section class="public-assets-section" id="public-assets">
       <div class="container">
-        <div class="asset-breadcrumb">
-          <a href="../../index.html">Home</a>
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-            stroke-linecap="round" stroke-linejoin="round" style="width: 14px; height: 14px;">
-            <path d="M9 18l6-6-6-6"></path>
-          </svg>
-          <span>Asset</span>
+        <div class="public-assets-header">
+          <h1>Assets</h1>
+          <p>Browse all registered assets. Scan an asset's QR code to quickly find it here.</p>
         </div>
 
-        <div class="asset-empty-state" id="asset-empty-state">
-          <div class="empty-state-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-              stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <!-- Loading State -->
+        <div class="public-assets-loading" id="assets-loading">
+          <p>Loading assets...</p>
+        </div>
+
+        <!-- Empty State -->
+        <div class="public-assets-empty" id="assets-empty" style="display:none;">
+          <div class="public-assets-empty-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
               <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
               <rect x="7" y="7" width="3" height="3"></rect>
               <rect x="14" y="7" width="3" height="3"></rect>
               <rect x="7" y="14" width="3" height="3"></rect>
             </svg>
           </div>
-          <h2>No Assets Available</h2>
-          <p>There are no registered assets to display right now. Assets will appear here once they are registered by an
-            administrator.</p>
+          <h2>No Assets Registered</h2>
+          <p>There are no registered assets yet. They will appear here once an administrator adds them.</p>
           <a href="../../index.html" class="btn btn-primary">Back to Home</a>
         </div>
+
+        <!-- Assets Grid -->
+        <div class="public-assets-grid" id="assets-grid" style="display:none;"></div>
       </div>
     </section>
   </main>
@@ -141,8 +140,7 @@
         <div class="footer-info">
           <a href="../../index.html" class="logo" aria-label="MaintainIQ Homepage">
             <div class="logo-icon" aria-hidden="true">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 18px; height: 18px;">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 18px; height: 18px;">
                 <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
               </svg>
             </div>
@@ -173,6 +171,7 @@
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script type="module" src="../../js/app.js"></script>
   <script type="module" src="../../js/auth/auth.js"></script>
   <script type="module" src="../../js/index.js"></script>

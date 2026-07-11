@@ -13,7 +13,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   initModals()
   initTableActions()
   initCreateTechnician()
+  initCreateAsset()
   loadTechnicians()
+  loadAssets()
 })
 
 /* --- Sidebar Navigation --- */
@@ -25,7 +27,6 @@ function initSidebarNavigation() {
   links.forEach(link => {
     link.addEventListener('click', e => {
       e.preventDefault()
-
       links.forEach(l => l.classList.remove('active'))
       link.classList.add('active')
 
@@ -39,9 +40,7 @@ function initSidebarNavigation() {
       }
 
       const sidebar = document.getElementById('admin-sidebar')
-      if (window.innerWidth <= 768) {
-        sidebar.classList.remove('open')
-      }
+      if (window.innerWidth <= 768) sidebar.classList.remove('open')
     })
   })
 }
@@ -50,12 +49,9 @@ function initSidebarNavigation() {
 function initSidebarToggle() {
   const toggleBtn = document.getElementById('mobile-sidebar-toggle')
   const sidebar = document.getElementById('admin-sidebar')
-
   if (!toggleBtn || !sidebar) return
 
-  toggleBtn.addEventListener('click', () => {
-    sidebar.classList.toggle('open')
-  })
+  toggleBtn.addEventListener('click', () => sidebar.classList.toggle('open'))
 
   document.addEventListener('click', e => {
     if (window.innerWidth <= 768 && sidebar.classList.contains('open')) {
@@ -83,6 +79,11 @@ function initModals() {
     btn.addEventListener('click', () => {
       const modalId = btn.dataset.modal
       closeModal(modalId)
+      // Clean up QR container when closing QR modal
+      if (modalId === 'modal-qr-result') {
+        const container = document.getElementById('qr-code-container')
+        if (container) container.innerHTML = ''
+      }
     })
   })
 
@@ -97,22 +98,15 @@ function initModals() {
     overlay.addEventListener('click', e => {
       if (e.target === overlay) {
         overlay.classList.remove('open')
+        const container = document.getElementById('qr-code-container')
+        if (container) container.innerHTML = ''
       }
     })
   })
 
-  const submitAssetBtn = document.getElementById('modal-create-asset-submit')
-  if (submitAssetBtn) {
-    submitAssetBtn.addEventListener('click', () => {
-      closeModal('modal-create-asset')
-    })
-  }
-
   const assignSubmitBtn = document.getElementById('modal-assign-tech-submit')
   if (assignSubmitBtn) {
-    assignSubmitBtn.addEventListener('click', () => {
-      closeModal('modal-assign-tech')
-    })
+    assignSubmitBtn.addEventListener('click', () => closeModal('modal-assign-tech'))
   }
 }
 
@@ -130,7 +124,165 @@ function closeModal(id) {
   document.body.style.overflow = ''
 }
 
+/* =====================================================================
+   ASSETS
+   ===================================================================== */
+
+/* --- Load Assets Table --- */
+
+async function loadAssets() {
+  const tbody = document.getElementById('assets-table-body')
+  if (!tbody) return
+
+  const { data: assets } = await supabase
+    .from('assets')
+    .select('*')
+    .order('created_at', { ascending: false })
+
+  if (!assets || assets.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="6" class="table-empty">No assets registered. Click "Create Asset" to add one.</td></tr>`
+    return
+  }
+
+  tbody.innerHTML = assets.map(a => {
+    const statusClass = a.status === 'Operational' ? 'badge-emerald'
+      : a.status === 'Issue Reported' ? 'badge-orange'
+      : a.status === 'Under Maintenance' ? 'badge-purple'
+      : 'badge-red'
+
+    return `
+    <tr>
+      <td>
+        <div class="asset-name-cell">
+          <span>${a.name}</span>
+          <label>${a.assetCode}</label>
+        </div>
+      </td>
+      <td>${a.category}</td>
+      <td>${a.location}</td>
+      <td><span class="badge ${statusClass}">${a.status}</span></td>
+      <td>
+        <button class="table-action-btn preview-qr-btn" data-code="${a.assetCode}" data-name="${a.name}">QR</button>
+      </td>
+      <td>—</td>
+    </tr>`
+  }).join('')
+
+  // Attach QR preview handlers
+  tbody.querySelectorAll('.preview-qr-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const code = btn.dataset.code
+      const name = btn.dataset.name
+      showQRModal(code, name)
+    })
+  })
+}
+
+/* --- Show QR Preview (from table) --- */
+
+function showQRModal(code, name) {
+  const container = document.getElementById('qr-code-container')
+  const info = document.getElementById('qr-asset-info')
+  const codeDisplay = document.getElementById('qr-asset-code-display')
+  const downloadBtn = document.getElementById('qr-download-btn')
+
+  container.innerHTML = ''
+  info.textContent = name
+
+  const url = `${window.location.origin}/pages/public/assets.html#${code}`
+  codeDisplay.textContent = `Asset Code: ${code}`
+
+  new QRCode(container, { text: url, width: 180, height: 180 })
+
+  // Download
+  setTimeout(() => {
+    const canvas = container.querySelector('canvas')
+    if (canvas) {
+      downloadBtn.href = canvas.toDataURL('image/png')
+      downloadBtn.download = `asset-${code}-qrcode.png`
+      downloadBtn.style.display = 'inline-flex'
+    }
+  }, 200)
+
+  openModal('modal-qr-result')
+}
+
+/* --- Create Asset --- */
+
+function initCreateAsset() {
+  const submitBtn = document.getElementById('modal-create-asset-submit')
+  if (!submitBtn) return
+  submitBtn.addEventListener('click', handleCreateAsset)
+}
+
+async function handleCreateAsset() {
+  const name = document.getElementById('asset-name').value.trim()
+  const category = document.getElementById('asset-category').value
+  const location = document.getElementById('asset-location').value.trim()
+  const submitBtn = document.getElementById('modal-create-asset-submit')
+
+  if (!name || !category || !location) {
+    showToast('Please fill in all fields.', 'error')
+    return
+  }
+
+  submitBtn.textContent = 'Creating...'
+  submitBtn.disabled = true
+
+  try {
+    // Generate a unique 6-digit asset code
+    let assetCode
+    let isUnique = false
+
+    while (!isUnique) {
+      assetCode = Math.floor(100000 + Math.random() * 900000)
+      const { data: existing } = await supabase
+        .from('assets')
+        .select('id')
+        .eq('assetCode', assetCode)
+        .maybeSingle()
+      if (!existing) isUnique = true
+    }
+
+    // Insert into Supabase
+    const { error } = await supabase
+      .from('assets')
+      .insert({
+        assetCode,
+        name,
+        category,
+        location,
+        status: 'Operational',
+        assignedTechnician: '',
+      })
+
+    if (error) throw error
+
+    // Show QR result modal
+    closeModal('modal-create-asset')
+    showQRModal(assetCode, name)
+
+    // Reset form
+    document.getElementById('asset-name').value = ''
+    document.getElementById('asset-category').value = ''
+    document.getElementById('asset-location').value = ''
+
+    // Reload table
+    await loadAssets()
+  } catch (err) {
+    showToast(err.message, 'error')
+  } finally {
+    submitBtn.textContent = 'Create Asset'
+    submitBtn.disabled = false
+  }
+}
+
+/* =====================================================================
+   TECHNICIANS
+   ===================================================================== */
+
 /* --- Load Technicians Table --- */
+
 async function loadTechnicians() {
   const tbody = document.getElementById('technicians-table-body')
   if (!tbody) return
@@ -157,10 +309,10 @@ async function loadTechnicians() {
 }
 
 /* --- Create Technician --- */
+
 function initCreateTechnician() {
   const submitBtn = document.getElementById('modal-create-technician-submit')
   if (!submitBtn) return
-
   submitBtn.addEventListener('click', handleCreateTechnician)
 }
 
@@ -184,20 +336,20 @@ async function handleCreateTechnician() {
   submitBtn.disabled = true
 
   try {
-    const { error: insertError } = await supabase
+    const { error } = await supabase
       .from('technicians')
       .insert({ email, full_name: name, specialty, password })
 
-    if (insertError) {
-      if (insertError.code === '23505') {
+    if (error) {
+      if (error.code === '23505') {
         showToast('A technician with this email already exists.', 'error')
       } else {
-        throw insertError
+        throw error
       }
       return
     }
 
-    showToast(`Technician "${name}" created successfully!`, 'success')
+    showToast(`Technician "${name}" added successfully!`, 'success')
     closeModal('modal-create-technician')
     await loadTechnicians()
 
@@ -213,7 +365,10 @@ async function handleCreateTechnician() {
   }
 }
 
-/* --- Table Action Buttons (placeholder) --- */
+/* =====================================================================
+   TABLE ACTION BUTTONS
+   ===================================================================== */
+
 function initTableActions() {
   document.addEventListener('click', e => {
     const btn = e.target.closest('.table-action-btn')

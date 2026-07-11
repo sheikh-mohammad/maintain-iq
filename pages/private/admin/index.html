@@ -407,14 +407,6 @@
             <label class="form-label">Location</label>
             <input type="text" class="form-input" id="asset-location" placeholder="e.g. Room 402, Main Building" />
           </div>
-          <div class="form-group">
-            <label class="form-label">Condition</label>
-            <select class="form-input" id="asset-condition">
-              <option value="Optimal">Optimal</option>
-              <option value="Fair">Fair</option>
-              <option value="Critical">Critical</option>
-            </select>
-          </div>
         </div>
         <div class="modal-footer">
           <button class="btn btn-secondary" data-modal="modal-create-asset">Cancel</button>
@@ -489,7 +481,27 @@
       </div>
     </div>
 
+    <!-- QR Code Result Modal -->
+    <div class="modal-overlay" id="modal-qr-result">
+      <div class="modal" style="max-width: 420px; text-align: center;">
+        <div class="modal-header">
+          <h3>Asset Created Successfully</h3>
+          <button class="modal-close" data-modal="modal-qr-result">&times;</button>
+        </div>
+        <div class="modal-body">
+          <p style="color: var(--text-gray-400); margin: 0 0 1rem; font-size: 0.875rem;" id="qr-asset-info"></p>
+          <div id="qr-code-container" style="display: flex; justify-content: center; margin-bottom: 1.5rem;"></div>
+          <div style="display: flex; gap: 0.75rem; justify-content: center;">
+            <a class="btn btn-emerald" id="qr-download-btn" download>Download QR</a>
+            <button class="btn btn-secondary" data-modal="modal-qr-result">Close</button>
+          </div>
+          <p style="margin-top: 1rem; font-size: 0.8125rem; color: var(--text-gray-500);" id="qr-asset-code-display"></p>
+        </div>
+      </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script type="module" src="../../../js/app.js"></script>
     <script type="module" src="../../../js/auth/auth.js"></script>
     <script type="module" src="../../../js/private/admin/index.js"></script>
