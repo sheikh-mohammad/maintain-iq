@@ -173,8 +173,10 @@
           <!-- ==================== ASSETS ==================== -->
           <section class="admin-page" id="page-assets">
             <div class="admin-page-header">
-              <h3>Asset Management</h3>
-              <p>Register, edit, and manage all physical assets.</p>
+              <div class="admin-page-header-left">
+                <h3>Asset Management</h3>
+                <p>Register, edit, and manage all physical assets.</p>
+              </div>
               <button class="btn btn-emerald" id="btn-create-asset">+ Create Asset</button>
             </div>
             <div class="admin-table-card">
@@ -238,8 +240,10 @@
           <!-- ==================== TECHNICIANS ==================== -->
           <section class="admin-page" id="page-technicians">
             <div class="admin-page-header">
-              <h3>Technician Management</h3>
-              <p>Add and manage maintenance technicians.</p>
+              <div class="admin-page-header-left">
+                <h3>Technician Management</h3>
+                <p>Add and manage maintenance technicians.</p>
+              </div>
               <button class="btn btn-emerald" id="btn-create-technician">+ Add Technician</button>
             </div>
             <div class="admin-table-card">
@@ -377,10 +381,10 @@
             <input type="password" class="form-input" id="tech-password" placeholder="Set a login password" />
           </div>
           </div>
-        </div>
-        <div class="modal-footer">
-          <button class="btn btn-secondary" data-modal="modal-create-technician">Cancel</button>
-          <button class="btn btn-emerald" id="modal-create-technician-submit">Add Technician</button>
+          <div class="modal-footer">
+            <button class="btn btn-secondary" data-modal="modal-create-technician">Cancel</button>
+            <button class="btn btn-emerald" id="modal-create-technician-submit">Add Technician</button>
+          </div>
         </div>
       </div>
     </div>
