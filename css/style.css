@@ -304,32 +304,12 @@ html.theme-transitioning *::after {
 }
 
 /* Light theme: section backgrounds with hardcoded dark */
-[data-theme="light"] .ai-section {
-  background: radial-gradient(circle at 100% 50%, rgba(139, 92, 246, 0.03) 0%, transparent 60%);
-}
-
 [data-theme="light"] .dashboard-showcase {
   background: radial-gradient(circle at 50% 100%, rgba(59, 130, 246, 0.03) 0%, transparent 50%);
 }
 
 [data-theme="light"] .cta-box {
   background: radial-gradient(circle at 50% 50%, rgba(59, 130, 246, 0.06) 0%, transparent 70%), var(--bg-secondary);
-}
-
-/* Light theme: hardcoded dark box backgrounds */
-[data-theme="light"] .simulation-window {
-  background: var(--bg-secondary);
-  border-color: var(--border-light);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
-}
-
-[data-theme="light"] .sim-header {
-  background: var(--bg-tertiary);
-  border-bottom-color: var(--border-subtle);
-}
-
-[data-theme="light"] .complaint-input-box label {
-  background: var(--bg-secondary);
 }
 
 [data-theme="light"] .browser-mockup {
@@ -351,11 +331,6 @@ html.theme-transitioning *::after {
   background: rgba(255, 255, 255, 0.92);
   border-color: var(--border-light);
   box-shadow: 0 16px 40px rgba(0, 0, 0, 0.08);
-}
-
-[data-theme="light"] .card-ai-preview {
-  border-color: var(--accent-purple-border);
-  box-shadow: 0 12px 28px rgba(139, 92, 246, 0.1);
 }
 
 /* Light theme: QR placeholder */

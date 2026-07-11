@@ -5,7 +5,6 @@
 document.addEventListener('DOMContentLoaded', () => {
   initStickyNavbar();
   initHeroPreviewHover();
-  initAiSimulation();
   initDashboardMockupTabs();
   initStatsCounter();
   initPricingToggle();
@@ -58,79 +57,7 @@ function initHeroPreviewHover() {
   });
 }
 
-/* --- 3. AI Triage Simulation Widget --- */
-function initAiSimulation() {
-  const runBtn = document.getElementById('btn-run-simulation');
-  const textContainer = document.getElementById('typed-complaint');
-  const triageOutput = document.getElementById('triage-output');
-  
-  if (!runBtn || !textContainer || !triageOutput) return;
-
-  const complaintText = "The projector display flickers and HDMI disconnects.";
-  let isRunning = false;
-
-  const runSimulation = () => {
-    if (isRunning) return;
-    isRunning = true;
-    
-    // Reset states
-    textContainer.innerHTML = '<span class="cursor" id="typing-cursor"></span>';
-    triageOutput.style.display = 'none';
-    runBtn.textContent = 'Analyzing...';
-    runBtn.style.opacity = '0.7';
-    runBtn.disabled = true;
-
-    let index = 0;
-    const typingInterval = setInterval(() => {
-      if (index < complaintText.length) {
-        // Insert character before cursor
-        const char = complaintText.charAt(index);
-        textContainer.insertBefore(document.createTextNode(char), document.getElementById('typing-cursor'));
-        index++;
-      } else {
-        clearInterval(typingInterval);
-        
-        // Brief loading delay representing AI thinking
-        setTimeout(() => {
-          // Reveal structured diagnostics with slide animation
-          triageOutput.style.display = 'flex';
-          
-          runBtn.textContent = 'Analysis Complete';
-          runBtn.style.opacity = '1';
-          runBtn.style.background = 'rgba(16, 185, 129, 0.15)';
-          runBtn.style.color = '#34d399';
-          runBtn.style.border = '1px solid rgba(16, 185, 129, 0.3)';
-          
-          setTimeout(() => {
-            // Restore button after showing success state
-            runBtn.textContent = 'Run AI Analysis';
-            runBtn.style.background = '';
-            runBtn.style.color = '';
-            runBtn.style.border = '';
-            runBtn.disabled = false;
-            isRunning = false;
-          }, 4000);
-        }, 1000);
-      }
-    }, 55); // Typing speed
-  };
-
-  runBtn.addEventListener('click', runSimulation);
-
-  // Trigger automatically when the AI section is scrolled into view (once)
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting && !isRunning) {
-        runSimulation();
-        observer.unobserve(entry.target);
-      }
-    });
-  }, { threshold: 0.5 });
-
-  observer.observe(document.getElementById('ai-triage'));
-}
-
-/* --- 4. Browser Mockup Tabs --- */
+/* --- 3. Browser Mockup Tabs --- */
 function initDashboardMockupTabs() {
   const tabs = document.querySelectorAll('.browser-tab');
   const contents = document.querySelectorAll('.mockup-content');
