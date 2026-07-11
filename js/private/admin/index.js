@@ -2,7 +2,12 @@
    MaintainIQ - Admin Dashboard Script
    ========================================================================== */
 
-document.addEventListener('DOMContentLoaded', () => {
+import { requireAdmin } from '../../auth/auth.js';
+
+document.addEventListener('DOMContentLoaded', async () => {
+  const ok = await requireAdmin();
+  if (!ok) return;
+
   initSidebarNavigation();
   initSidebarToggle();
   initModals();
