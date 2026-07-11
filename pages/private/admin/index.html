@@ -1,0 +1,377 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard | MaintainIQ</title>
+    <meta name="description" content="MaintainIQ admin dashboard for asset and maintenance management." />
+    <link rel="stylesheet" href="../../../css/style.css" />
+    <link rel="stylesheet" href="../../../css/index.css" />
+    <link rel="stylesheet" href="../../../css/private/admin/index.css" />
+  </head>
+  <body>
+    <div class="admin-layout">
+      <!-- Sidebar -->
+      <aside class="admin-sidebar" id="admin-sidebar">
+        <div class="sidebar-header">
+          <a href="../../../index.html" class="sidebar-logo">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 20px; height: 20px;">
+              <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+            </svg>
+            <span>MaintainIQ</span>
+          </a>
+          <button class="sidebar-collapse-btn" id="sidebar-collapse" aria-label="Collapse sidebar">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 18px; height: 18px;"><path d="M15 18l-6-6 6-6"></path></svg>
+          </button>
+        </div>
+
+        <nav class="sidebar-nav">
+          <ul>
+            <li>
+              <a href="#" class="sidebar-link active" data-page="dashboard">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1"></rect><rect x="14" y="3" width="7" height="5" rx="1"></rect><rect x="14" y="12" width="7" height="9" rx="1"></rect><rect x="3" y="16" width="7" height="5" rx="1"></rect></svg>
+                <span>Dashboard</span>
+              </a>
+            </li>
+            <li>
+              <a href="#" class="sidebar-link" data-page="assets">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>
+                <span>Assets</span>
+              </a>
+            </li>
+            <li>
+              <a href="#" class="sidebar-link" data-page="issues">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1zM4 22v-7"></path></svg>
+                <span>Issues</span>
+              </a>
+            </li>
+            <li>
+              <a href="#" class="sidebar-link" data-page="technicians">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                <span>Technicians</span>
+              </a>
+            </li>
+            <li>
+              <a href="#" class="sidebar-link" data-page="analytics">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 20V10M12 20V4M6 20v-6"></path></svg>
+                <span>Analytics</span>
+              </a>
+            </li>
+          </ul>
+        </nav>
+
+        <div class="sidebar-footer">
+          <a href="../../../index.html" class="sidebar-link">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"></path></svg>
+            <span>Logout</span>
+          </a>
+        </div>
+      </aside>
+
+      <!-- Main Content Area -->
+      <div class="admin-main">
+        <!-- Top Bar -->
+        <header class="admin-topbar">
+          <button class="mobile-sidebar-toggle" id="mobile-sidebar-toggle" aria-label="Toggle sidebar">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 22px; height: 22px;"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+          </button>
+          <div class="topbar-title">
+            <h2 id="page-title">Dashboard</h2>
+          </div>
+          <div class="topbar-actions">
+            <div class="topbar-badge" id="notification-badge">0</div>
+            <div class="admin-avatar">A</div>
+          </div>
+        </header>
+
+        <!-- Page Content Sections -->
+        <div class="admin-content">
+
+          <!-- ==================== DASHBOARD ==================== -->
+          <section class="admin-page active" id="page-dashboard">
+            <div class="admin-page-header">
+              <h3>Overview</h3>
+              <p>Summary of your facility operations.</p>
+            </div>
+            <div class="stats-cards">
+              <div class="stat-card">
+                <div class="stat-card-icon green">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>
+                </div>
+                <div class="stat-card-body">
+                  <span class="stat-card-value">0</span>
+                  <span class="stat-card-label">Total Assets</span>
+                </div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-card-icon orange">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1zM4 22v-7"></path></svg>
+                </div>
+                <div class="stat-card-body">
+                  <span class="stat-card-value">0</span>
+                  <span class="stat-card-label">Open Issues</span>
+                </div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-card-icon blue">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg>
+                </div>
+                <div class="stat-card-body">
+                  <span class="stat-card-value">0</span>
+                  <span class="stat-card-label">Technicians</span>
+                </div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-card-icon purple">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                </div>
+                <div class="stat-card-body">
+                  <span class="stat-card-value">0</span>
+                  <span class="stat-card-label">Resolved</span>
+                </div>
+              </div>
+            </div>
+            <div class="admin-empty-section">
+              <p>No data available yet. Start by adding assets and technicians.</p>
+            </div>
+          </section>
+
+          <!-- ==================== ASSETS ==================== -->
+          <section class="admin-page" id="page-assets">
+            <div class="admin-page-header">
+              <h3>Asset Management</h3>
+              <p>Register, edit, and manage all physical assets.</p>
+              <button class="btn btn-emerald" id="btn-create-asset">+ Create Asset</button>
+            </div>
+            <div class="admin-table-card">
+              <div class="admin-table-toolbar">
+                <input type="text" class="admin-search-input" placeholder="Search assets..." id="asset-search" />
+              </div>
+              <div class="admin-table-wrapper">
+                <table class="admin-table">
+                  <thead>
+                    <tr>
+                      <th>Asset Name</th>
+                      <th>Code</th>
+                      <th>Category</th>
+                      <th>Location</th>
+                      <th>Status</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="assets-table-body">
+                    <tr>
+                      <td colspan="6" class="table-empty">No assets registered. Click "Create Asset" to add one.</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </section>
+
+          <!-- ==================== ISSUES ==================== -->
+          <section class="admin-page" id="page-issues">
+            <div class="admin-page-header">
+              <h3>Issue Management</h3>
+              <p>View, triage, and assign reported issues.</p>
+            </div>
+            <div class="admin-table-card">
+              <div class="admin-table-toolbar">
+                <input type="text" class="admin-search-input" placeholder="Search issues..." id="issue-search" />
+              </div>
+              <div class="admin-table-wrapper">
+                <table class="admin-table">
+                  <thead>
+                    <tr>
+                      <th>Issue</th>
+                      <th>Asset</th>
+                      <th>Priority</th>
+                      <th>Status</th>
+                      <th>Assigned To</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="issues-table-body">
+                    <tr>
+                      <td colspan="6" class="table-empty">No issues reported yet.</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </section>
+
+          <!-- ==================== TECHNICIANS ==================== -->
+          <section class="admin-page" id="page-technicians">
+            <div class="admin-page-header">
+              <h3>Technician Management</h3>
+              <p>Add and manage maintenance technicians.</p>
+              <button class="btn btn-emerald" id="btn-create-technician">+ Add Technician</button>
+            </div>
+            <div class="admin-table-card">
+              <div class="admin-table-wrapper">
+                <table class="admin-table">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Specialty</th>
+                      <th>Email</th>
+                      <th>Status</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="technicians-table-body">
+                    <tr>
+                      <td colspan="5" class="table-empty">No technicians added. Click "Add Technician" to add one.</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </section>
+
+          <!-- ==================== ANALYTICS ==================== -->
+          <section class="admin-page" id="page-analytics">
+            <div class="admin-page-header">
+              <h3>Analytics</h3>
+              <p>Performance metrics and maintenance insights.</p>
+            </div>
+            <div class="stats-cards">
+              <div class="stat-card">
+                <div class="stat-card-body">
+                  <span class="stat-card-value">--</span>
+                  <span class="stat-card-label">Avg Resolution Time</span>
+                </div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-card-body">
+                  <span class="stat-card-value">--</span>
+                  <span class="stat-card-label">Uptime Ratio</span>
+                </div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-card-body">
+                  <span class="stat-card-value">--</span>
+                  <span class="stat-card-label">Monthly Cost</span>
+                </div>
+              </div>
+            </div>
+            <div class="admin-empty-section">
+              <p>Analytics will populate once assets and issues are registered.</p>
+            </div>
+          </section>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== MODALS ==================== -->
+
+    <!-- Create Asset Modal -->
+    <div class="modal-overlay" id="modal-create-asset">
+      <div class="modal">
+        <div class="modal-header">
+          <h3>Create New Asset</h3>
+          <button class="modal-close" data-modal="modal-create-asset">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="form-label">Asset Name</label>
+            <input type="text" class="form-input" id="asset-name" placeholder="e.g. Classroom Projector 01" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Category</label>
+            <select class="form-input" id="asset-category">
+              <option value="">Select category</option>
+              <option value="AV Equipment">AV Equipment</option>
+              <option value="HVAC">HVAC</option>
+              <option value="Plumbing">Plumbing</option>
+              <option value="Electrical">Electrical</option>
+              <option value="Furniture">Furniture</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Location</label>
+            <input type="text" class="form-input" id="asset-location" placeholder="e.g. Room 402, Main Building" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Condition</label>
+            <select class="form-input" id="asset-condition">
+              <option value="Optimal">Optimal</option>
+              <option value="Fair">Fair</option>
+              <option value="Critical">Critical</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" data-modal="modal-create-asset">Cancel</button>
+          <button class="btn btn-emerald" id="modal-create-asset-submit">Create Asset</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Create Technician Modal -->
+    <div class="modal-overlay" id="modal-create-technician">
+      <div class="modal">
+        <div class="modal-header">
+          <h3>Add Technician</h3>
+          <button class="modal-close" data-modal="modal-create-technician">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="form-label">Full Name</label>
+            <input type="text" class="form-input" id="tech-name" placeholder="e.g. John Doe" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Specialty</label>
+            <select class="form-input" id="tech-specialty">
+              <option value="">Select specialty</option>
+              <option value="Electrical">Electrical</option>
+              <option value="Plumbing">Plumbing</option>
+              <option value="HVAC">HVAC</option>
+              <option value="AV Equipment">AV Equipment</option>
+              <option value="General">General</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email</label>
+            <input type="email" class="form-input" id="tech-email" placeholder="e.g. john@example.com" />
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" data-modal="modal-create-technician">Cancel</button>
+          <button class="btn btn-emerald" id="modal-create-technician-submit">Add Technician</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Assign Technician Modal -->
+    <div class="modal-overlay" id="modal-assign-tech">
+      <div class="modal">
+        <div class="modal-header">
+          <h3>Assign Technician</h3>
+          <button class="modal-close" data-modal="modal-assign-tech">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="form-label">Issue</label>
+            <input type="text" class="form-input" id="assign-issue-display" disabled />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Select Technician</label>
+            <select class="form-input" id="assign-tech-select">
+              <option value="">-- No technicians available --</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" data-modal="modal-assign-tech">Cancel</button>
+          <button class="btn btn-emerald" id="modal-assign-tech-submit">Assign</button>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="../../../js/private/admin/index.js"></script>
+  </body>
+</html>
