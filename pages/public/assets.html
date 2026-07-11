@@ -176,6 +176,47 @@
   <script type="module" src="../../js/auth/auth.js"></script>
   <script type="module" src="../../js/index.js"></script>
   <script type="module" src="../../js/public/index.js"></script>
+
+  <!-- Report Issue Modal -->
+  <div class="modal-overlay" id="modal-report-issue">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Report Issue</h3>
+        <button class="modal-close" data-modal="modal-report-issue">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">Asset</label>
+          <input type="text" class="form-input" id="report-asset-display" disabled />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Title</label>
+          <input type="text" class="form-input" id="report-title" placeholder="e.g. Projector display flickering" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Description</label>
+          <textarea class="form-input" id="report-description" placeholder="Describe the issue in detail..." rows="4"></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Priority</label>
+          <select class="form-input" id="report-priority">
+            <option value="Low">Low</option>
+            <option value="Medium" selected>Medium</option>
+            <option value="High">High</option>
+            <option value="Critical">Critical</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Your Email</label>
+          <input type="email" class="form-input" id="report-email" placeholder="you@example.com" />
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-modal="modal-report-issue">Cancel</button>
+        <button class="btn btn-emerald" id="btn-submit-report">Submit Issue</button>
+      </div>
+    </div>
+  </div>
 </body>
 
 </html>

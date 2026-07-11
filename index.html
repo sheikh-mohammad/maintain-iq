@@ -4,8 +4,8 @@
     <script>!function(){var t=localStorage.getItem('maintainiq-theme');if(!t&&(t=window.matchMedia('(prefers-color-scheme:light)').matches?'light':'dark'),'light'===t)document.documentElement.setAttribute('data-theme','light')}();</script>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>MaintainIQ | AI-Powered QR Maintenance & Asset History Platform</title>
-    <meta name="description" content="MaintainIQ is an enterprise-grade AI-powered QR Maintenance & Asset History Platform. Register assets, generate QR codes, report issues instantly, and triage repairs with smart AI diagnostics." />
+    <title>MaintainIQ | QR Maintenance & Asset History Platform</title>
+    <meta name="description" content="MaintainIQ is an enterprise-grade QR Maintenance & Asset History Platform. Register assets, generate QR codes, report issues instantly, and triage repairs efficiently." />
     <!-- Style Sheets -->
     <link rel="stylesheet" href="./css/style.css" />
     <link rel="stylesheet" href="./css/index.css" />
@@ -27,7 +27,6 @@
           <ul class="nav-links">
             <li><a href="#features" id="nav-link-features">Features</a></li>
             <li><a href="#workflow" id="nav-link-solutions">Solutions</a></li>
-            <li><a href="#ai-triage" id="nav-link-ai">AI Diagnostics</a></li>
             <li><a href="pages/public/assets.html" id="nav-link-assets">Assets</a></li>
             <li><a href="#docs" id="nav-link-docs">Docs</a></li>
           </ul>
@@ -86,7 +85,6 @@
         <ul class="mobile-drawer-links">
           <li><a href="#features" class="mobile-drawer-link">Features</a></li>
           <li><a href="#workflow" class="mobile-drawer-link">Solutions</a></li>
-          <li><a href="#ai-triage" class="mobile-drawer-link">AI Diagnostics</a></li>
 
           <li><a href="#docs" class="mobile-drawer-link">Docs</a></li>
         </ul>
@@ -119,20 +117,20 @@
       <section class="hero" id="hero">
         <div class="container">
           <div class="hero-content">
-            <a href="#ai-triage" class="hero-tag" id="hero-announcement" aria-label="Announcing MaintainIQ 2.0. Click to view AI Triage.">
+            <a href="#features" class="hero-tag" id="hero-announcement" aria-label="Learn more about MaintainIQ">
               <span class="new-badge">New</span>
-              <span>AI Triage Diagnostics now live</span>
+              <span>QR Maintenance Platform v2.0</span>
               <svg xmlns="http://www.w3.org/2000/svg" class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-left: 0.25rem;">
                 <path d="M5 12h14M12 5l7 7-7 7"></path>
               </svg>
             </a>
             <h1>
-              <span class="gradient-text-full">AI-Powered</span>
+              <span class="gradient-text-full">QR-Powered</span>
               <span>Maintenance Management</span>
               <span style="font-size: 0.85em; font-weight: 500; color: var(--text-gray-400);">For Modern Organizations</span>
             </h1>
             <p class="hero-desc">
-              Scan. Report. Diagnose. Maintain. Register physical assets, generate unique QR codes, allow immediate issue reporting by scans, assign technicians instantly, and leverage AI to diagnose errors.
+              Scan. Report. Diagnose. Maintain. Register physical assets, generate unique QR codes, allow immediate issue reporting by scans, assign technicians instantly, and track repairs end-to-end.
             </p>
             <div class="hero-actions">
               <a href="#features" class="btn btn-primary" id="btn-hero-primary">
@@ -208,21 +206,7 @@
                 </div>
               </div>
 
-              <!-- Overlay Card 2: AI Diagnosis Preview -->
-              <div class="floating-overlay-card card-ai-preview">
-                <div class="ai-header-row">
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path>
-                  </svg>
-                  <span>MaintainIQ AI Agent</span>
-                </div>
-                <div class="ai-preview-diagnosis">
-                  <h4>HDMI Link Failure</h4>
-                  <p>Probable Cause: Cable wear & tear or port solder crack. Suggested triage: HDMI hot plug reboot.</p>
-                </div>
-              </div>
-
-              <!-- Overlay Card 3: Micro Chart Preview -->
+              <!-- Overlay Card 2: Micro Chart Preview -->
               <div class="floating-overlay-card card-chart-preview">
                 <div class="chart-preview-header">
                   <span>Downtime Reduction</span>
@@ -286,18 +270,7 @@
           </div>
 
           <div class="features-grid">
-            <!-- Feature 1: AI Triage -->
-            <div class="premium-card feature-card ai-card">
-              <div class="feature-icon-wrapper" aria-hidden="true">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 24px; height: 24px;">
-                  <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path>
-                </svg>
-              </div>
-              <h3>AI Issue Triage</h3>
-              <p>Instantly categorize incoming reports, predict possible hardware causes, and outline safe initial diagnostic steps before dispatching a technician.</p>
-            </div>
-
-            <!-- Feature 2: QR Asset Management -->
+            <!-- Feature 1: QR Asset Management -->
             <div class="premium-card feature-card">
               <div class="feature-icon-wrapper" aria-hidden="true">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 24px; height: 24px;">

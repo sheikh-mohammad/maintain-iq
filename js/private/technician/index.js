@@ -2,7 +2,7 @@
    MaintainIQ - Technician Dashboard Script
    ========================================================================== */
 
-import { showToast } from '../../auth/auth.js'
+import { showToast, supabase } from '../../auth/auth.js'
 
 const TECH_SESSION_KEY = 'maintainiq-tech-session'
 
@@ -31,6 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initSidebarNavigation()
   initSidebarToggle()
   initLogout()
+  loadTechIssues()
 })
 
 /* --- Sidebar Navigation --- */
@@ -84,6 +85,47 @@ function initSidebarToggle() {
       }
     }
   })
+}
+
+/* --- Load Issues --- */
+
+async function loadTechIssues() {
+  const tbody = document.getElementById('tech-issues-body')
+  if (!tbody) return
+
+  // For now, show all reported issues (later filter by assigned tech)
+  const { data: issues } = await supabase
+    .from('issues')
+    .select('*')
+    .order('created_at', { ascending: false })
+    .limit(20)
+
+  if (!issues || issues.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="5" class="tech-table-empty">No issues assigned yet.</td></tr>`
+    return
+  }
+
+  tbody.innerHTML = issues.map(issue => {
+    const priorityClass = issue.priority === 'Critical' ? 'badge-red'
+      : issue.priority === 'High' ? 'badge-orange'
+      : issue.priority === 'Medium' ? 'badge-blue'
+      : 'badge-emerald'
+
+    const statusClass = issue.status === 'Reported' ? 'badge-orange'
+      : issue.status === 'Assigned' ? 'badge-blue'
+      : issue.status === 'Resolved' ? 'badge-emerald'
+      : 'badge-purple'
+
+    return `
+      <tr>
+        <td>${issue.title}</td>
+        <td>${issue.assetId}</td>
+        <td><span class="badge ${priorityClass}">${issue.priority}</span></td>
+        <td><span class="badge ${statusClass}">${issue.status}</span></td>
+        <td>—</td>
+      </tr>
+    `
+  }).join('')
 }
 
 /* --- Logout --- */

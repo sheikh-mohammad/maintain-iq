@@ -16,6 +16,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   initCreateAsset()
   loadTechnicians()
   loadAssets()
+  loadIssues()
 })
 
 /* --- Sidebar Navigation --- */
@@ -205,6 +206,46 @@ function showQRModal(code, name) {
   }, 200)
 
   openModal('modal-qr-result')
+}
+
+/* --- Load Issues Table --- */
+
+async function loadIssues() {
+  const tbody = document.getElementById('issues-table-body')
+  if (!tbody) return
+
+  const { data: issues } = await supabase
+    .from('issues')
+    .select('*')
+    .order('created_at', { ascending: false })
+
+  if (!issues || issues.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="6" class="table-empty">No issues reported yet.</td></tr>`
+    return
+  }
+
+  tbody.innerHTML = issues.map(issue => {
+    const priorityClass = issue.priority === 'Critical' ? 'badge-red'
+      : issue.priority === 'High' ? 'badge-orange'
+      : issue.priority === 'Medium' ? 'badge-blue'
+      : 'badge-emerald'
+
+    const statusClass = issue.status === 'Reported' ? 'badge-orange'
+      : issue.status === 'Assigned' ? 'badge-blue'
+      : issue.status === 'Resolved' ? 'badge-emerald'
+      : 'badge-purple'
+
+    return `
+      <tr>
+        <td>${issue.title}</td>
+        <td>${issue.assetId}</td>
+        <td><span class="badge ${priorityClass}">${issue.priority}</span></td>
+        <td><span class="badge ${statusClass}">${issue.status}</span></td>
+        <td>—</td>
+        <td>—</td>
+      </tr>
+    `
+  }).join('')
 }
 
 /* --- Create Asset --- */

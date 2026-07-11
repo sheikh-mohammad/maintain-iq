@@ -1,13 +1,17 @@
 /* ==========================================================================
    MaintainIQ - Public Asset Page Script
-   Shows all registered assets. Highlights the asset matching #code if present.
+   Shows all assets. QR scan (#code) highlights the scanned asset.
+   Each asset has a Report Issue button that opens a modal.
    ========================================================================== */
 
-import { supabase } from '../auth/auth.js'
+import { supabase, showToast } from '../auth/auth.js'
 
 document.addEventListener('DOMContentLoaded', () => {
   loadAllAssets()
+  initReportModal()
 })
+
+/* ── Load & display all assets ──────────────────────────────────────────── */
 
 async function loadAllAssets() {
   const loading = document.getElementById('assets-loading')
@@ -47,17 +51,23 @@ async function loadAllAssets() {
           </div>
           <span class="badge ${statusClass}">${a.status}</span>
         </div>
+
         <div class="public-asset-meta">
           <span><strong>Category:</strong> ${a.category || '—'}</span>
           <span><strong>Location:</strong> ${a.location || '—'}</span>
+          <span><strong>Technician:</strong> ${a.assignedTechnician || 'Not assigned'}</span>
         </div>
-        ${a.assignedTechnician ? `<div class="public-asset-tech">Technician: ${a.assignedTechnician}</div>` : ''}
+
         <div class="public-asset-qr" id="qr-${a.assetCode}"></div>
+
+        <button class="btn btn-primary report-issue-btn" data-code="${a.assetCode}" data-name="${a.name}">
+          Report Issue
+        </button>
       </div>
     `
   }).join('')
 
-  // Generate QR codes for each asset + scroll to highlighted
+  // Generate QR codes
   let highlightedEl = null
 
   assets.forEach(a => {
@@ -65,17 +75,113 @@ async function loadAllAssets() {
     if (!container) return
 
     const url = `${window.location.origin}/pages/public/assets.html#${a.assetCode}`
-    new QRCode(container, { text: url, width: 120, height: 120 })
+    new QRCode(container, { text: url, width: 130, height: 130 })
 
     if (scannedCode && String(a.assetCode) === scannedCode) {
       highlightedEl = document.querySelector(`.public-asset-card[data-code="${a.assetCode}"]`)
     }
   })
 
-  // Scroll to highlighted asset
+  // Scroll to highlighted asset from QR scan
   if (highlightedEl) {
     setTimeout(() => {
       highlightedEl.scrollIntoView({ behavior: 'smooth', block: 'center' })
-    }, 300)
+    }, 400)
   }
+
+  // Attach report issue handlers
+  document.querySelectorAll('.report-issue-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const code = btn.dataset.code
+      const name = btn.dataset.name
+      openReportModal(code, name)
+    })
+  })
+}
+
+/* ── Report Issue Modal ──────────────────────────────────────────────────── */
+
+function initReportModal() {
+  // Close modal handlers
+  document.querySelectorAll('.modal-close[data-modal="modal-report-issue"]').forEach(btn => {
+    btn.addEventListener('click', () => closeModal('modal-report-issue'))
+  })
+
+  document.querySelectorAll('.modal-footer .btn-secondary[data-modal="modal-report-issue"]').forEach(btn => {
+    btn.addEventListener('click', () => closeModal('modal-report-issue'))
+  })
+
+  document.getElementById('modal-report-issue')?.addEventListener('click', e => {
+    if (e.target === e.currentTarget) closeModal('modal-report-issue')
+  })
+
+  // Submit handler
+  document.getElementById('btn-submit-report')?.addEventListener('click', handleSubmitReport)
+}
+
+function openReportModal(assetCode, assetName) {
+  document.getElementById('report-asset-display').value = `${assetName} (Code: ${assetCode})`
+  document.getElementById('report-asset-display').dataset.assetCode = assetCode
+  document.getElementById('report-title').value = ''
+  document.getElementById('report-description').value = ''
+  document.getElementById('report-priority').value = 'Medium'
+  document.getElementById('report-email').value = ''
+  openModal('modal-report-issue')
+}
+
+async function handleSubmitReport() {
+  const assetDisplay = document.getElementById('report-asset-display')
+  const assetCode = assetDisplay.dataset.assetCode
+  const title = document.getElementById('report-title').value.trim()
+  const description = document.getElementById('report-description').value.trim()
+  const priority = document.getElementById('report-priority').value
+  const reporterEmail = document.getElementById('report-email').value.trim()
+  const submitBtn = document.getElementById('btn-submit-report')
+
+  if (!title || !description || !reporterEmail) {
+    showToast('Please fill in title, description, and email.', 'error')
+    return
+  }
+
+  submitBtn.textContent = 'Submitting...'
+  submitBtn.disabled = true
+
+  try {
+    const { error } = await supabase
+      .from('issues')
+      .insert({
+        assetId: Number(assetCode),
+        title,
+        description,
+        priority,
+        status: 'Reported',
+        reporterEmail,
+      })
+
+    if (error) throw error
+
+    showToast('Issue reported successfully!', 'success')
+    closeModal('modal-report-issue')
+  } catch (err) {
+    showToast(err.message, 'error')
+  } finally {
+    submitBtn.textContent = 'Submit Issue'
+    submitBtn.disabled = false
+  }
+}
+
+/* ── Modal helpers ────────────────────────────────────────────────────────── */
+
+function openModal(id) {
+  const modal = document.getElementById(id)
+  if (!modal) return
+  modal.classList.add('open')
+  document.body.style.overflow = 'hidden'
+}
+
+function closeModal(id) {
+  const modal = document.getElementById(id)
+  if (!modal) return
+  modal.classList.remove('open')
+  document.body.style.overflow = ''
 }
