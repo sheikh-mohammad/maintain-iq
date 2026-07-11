@@ -119,13 +119,33 @@ function initReportModal() {
   document.getElementById('btn-submit-report')?.addEventListener('click', handleSubmitReport)
 }
 
-function openReportModal(assetCode, assetName) {
+async function openReportModal(assetCode, assetName) {
   document.getElementById('report-asset-display').value = `${assetName} (Code: ${assetCode})`
   document.getElementById('report-asset-display').dataset.assetCode = assetCode
   document.getElementById('report-title').value = ''
   document.getElementById('report-description').value = ''
   document.getElementById('report-priority').value = 'Medium'
-  document.getElementById('report-email').value = ''
+
+  // Auto-fill email from logged-in user
+  const emailInput = document.getElementById('report-email')
+  const techSession = localStorage.getItem('maintainiq-tech-session')
+
+  if (techSession) {
+    try {
+      const tech = JSON.parse(techSession)
+      emailInput.value = tech.email || ''
+    } catch { /* ignore */ }
+  } else {
+    const { data: { session } } = await supabase.auth.getSession()
+    if (session?.user?.email) {
+      emailInput.value = session.user.email
+    } else {
+      emailInput.value = ''
+    }
+  }
+
+  emailInput.readOnly = !!emailInput.value
+
   openModal('modal-report-issue')
 }
 
