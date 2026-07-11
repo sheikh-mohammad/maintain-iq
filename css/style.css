@@ -1,0 +1,251 @@
+/* ==========================================================================
+   MaintainIQ - Universal Styles (Theme, Toggle, Global Overrides)
+   ========================================================================== */
+
+/* --- Smooth Theme Transitions --- */
+html.theme-transitioning,
+html.theme-transitioning *,
+html.theme-transitioning *::before,
+html.theme-transitioning *::after {
+  transition: background-color 0.3s ease,
+              border-color 0.3s ease,
+              color 0.3s ease,
+              box-shadow 0.3s ease !important;
+}
+
+/* --- Theme Toggle Button --- */
+.theme-toggle {
+  background: transparent;
+  border: 1px solid var(--border-light);
+  color: var(--text-gray-400);
+  cursor: pointer;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition-fast);
+  flex-shrink: 0;
+}
+
+.theme-toggle:hover {
+  color: var(--text-white);
+  border-color: var(--border-active);
+  background: var(--bg-tertiary);
+}
+
+.theme-toggle svg {
+  width: 18px;
+  height: 18px;
+  transition: transform var(--transition-fast);
+}
+
+.theme-toggle:hover svg {
+  transform: rotate(15deg);
+}
+
+/* Show/hide icons based on current theme */
+.theme-icon-moon { display: none; }
+[data-theme="light"] .theme-icon-moon { display: block; }
+[data-theme="light"] .theme-icon-sun { display: none; }
+
+/* --- Auth pages: theme toggle position --- */
+.auth-theme-toggle {
+  position: absolute;
+  top: 1.25rem;
+  right: 1.25rem;
+}
+
+/* --- Light Theme: CSS Variable Overrides --- */
+/* Use :root[data-theme="light"] for higher specificity than :root */
+:root[data-theme="light"] {
+  --bg-primary: #f7f8fa;
+  --bg-secondary: #ffffff;
+  --bg-tertiary: #eef0f3;
+  --border-subtle: rgba(0, 0, 0, 0.06);
+  --border-light: rgba(0, 0, 0, 0.10);
+  --border-active: rgba(0, 0, 0, 0.18);
+  --text-white: #0f1419;
+  --text-gray-100: #1f2329;
+  --text-gray-300: #3f434a;
+  --text-gray-400: #6b7280;
+  --text-gray-500: #9ca3af;
+}
+
+/* --- Light Theme: Body & Global Overrides --- */
+[data-theme="light"] body {
+  background: radial-gradient(circle at 50% 0%, rgba(59, 130, 246, 0.03) 0%, rgba(139, 92, 246, 0.02) 30%, transparent 70%), var(--bg-primary);
+}
+
+[data-theme="light"] ::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+}
+
+[data-theme="light"] ::-webkit-scrollbar-thumb {
+  background: var(--text-gray-500);
+  border-color: var(--bg-primary);
+}
+
+/* Light theme: gradient text (replace white with dark) */
+[data-theme="light"] .gradient-text-emerald {
+  background: linear-gradient(135deg, #1f2329 30%, var(--accent-emerald) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+[data-theme="light"] .gradient-text-blue {
+  background: linear-gradient(135deg, #1f2329 40%, var(--accent-blue) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+[data-theme="light"] .gradient-text-full {
+  background: linear-gradient(135deg, #1f2329 20%, #10b981 60%, #3b82f6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Light theme: navbar scrolled */
+[data-theme="light"] .navbar.scrolled {
+  background-color: rgba(255, 255, 255, 0.85);
+}
+
+/* Light theme: section backgrounds with hardcoded dark */
+[data-theme="light"] .ai-section {
+  background: radial-gradient(circle at 100% 50%, rgba(139, 92, 246, 0.03) 0%, transparent 60%);
+}
+
+[data-theme="light"] .dashboard-showcase {
+  background: radial-gradient(circle at 50% 100%, rgba(59, 130, 246, 0.03) 0%, transparent 50%);
+}
+
+[data-theme="light"] .cta-box {
+  background: radial-gradient(circle at 50% 50%, rgba(59, 130, 246, 0.06) 0%, transparent 70%), var(--bg-secondary);
+}
+
+/* Light theme: hardcoded dark box backgrounds */
+[data-theme="light"] .simulation-window {
+  background: var(--bg-secondary);
+  border-color: var(--border-light);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+}
+
+[data-theme="light"] .sim-header {
+  background: var(--bg-tertiary);
+  border-bottom-color: var(--border-subtle);
+}
+
+[data-theme="light"] .complaint-input-box label {
+  background: var(--bg-secondary);
+}
+
+[data-theme="light"] .browser-mockup {
+  background: var(--bg-secondary);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="light"] .browser-header {
+  background: var(--bg-tertiary);
+}
+
+[data-theme="light"] .mockup-sidebar {
+  background: var(--bg-primary);
+}
+
+/* Light theme: floating preview cards */
+[data-theme="light"] .asset-preview-card,
+[data-theme="light"] .floating-overlay-card {
+  background: rgba(255, 255, 255, 0.92);
+  border-color: var(--border-light);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="light"] .card-ai-preview {
+  border-color: var(--accent-purple-border);
+  box-shadow: 0 12px 28px rgba(139, 92, 246, 0.1);
+}
+
+/* Light theme: QR placeholder */
+[data-theme="light"] .qr-placeholder {
+  background: #ffffff;
+  border: 1px solid var(--border-light);
+}
+
+/* Light theme: rgba(255,255,255,0.0X) → rgba(0,0,0,0.0X) elements */
+[data-theme="light"] .browser-tab.active {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="light"] .mockup-nav-link:hover,
+[data-theme="light"] .mockup-nav-link.active {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+[data-theme="light"] .mockup-widget,
+[data-theme="light"] .issue-item-card,
+[data-theme="light"] .analytics-card {
+  background: rgba(0, 0, 0, 0.02);
+}
+
+[data-theme="light"] .chart-bar {
+  background: rgba(0, 0, 0, 0.07);
+}
+
+[data-theme="light"] .qr-section {
+  background: rgba(0, 0, 0, 0.02);
+}
+
+[data-theme="light"] .comparison-card-item {
+  background: rgba(0, 0, 0, 0.02);
+}
+
+[data-theme="light"] .btn-primary:hover {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+}
+
+/* Light theme: mobile drawer adjustments */
+[data-theme="light"] .mobile-drawer {
+  box-shadow: -10px 0 30px rgba(0, 0, 0, 0.08);
+}
+
+/* Light theme: hero/preview glow */
+[data-theme="light"] .hero-visual::before {
+  background: radial-gradient(circle, rgba(16, 185, 129, 0.05) 0%, rgba(59, 130, 246, 0.03) 50%, transparent 80%);
+}
+
+/* Light theme: pricing card popular */
+[data-theme="light"] .pricing-card.popular {
+  box-shadow: 0 20px 40px rgba(16, 185, 129, 0.08);
+}
+
+/* --- Sidebar theme toggle button (admin) --- */
+.sidebar-footer button.sidebar-link {
+  background: transparent !important;
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-sans);
+  text-align: left;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  color: var(--text-gray-400);
+  text-decoration: none;
+  border-radius: 8px;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  transition: all var(--transition-fast);
+}
+
+.sidebar-footer button.sidebar-link:hover {
+  color: var(--text-white) !important;
+  background: var(--bg-tertiary) !important;
+}
+
+/* Keep badge text white in light mode */
+[data-theme="light"] .hero-tag .new-badge,
+[data-theme="light"] .popular-badge {
+  color: #ffffff;
+}

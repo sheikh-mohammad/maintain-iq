@@ -2,6 +2,7 @@
 <html lang="en">
 
 <head>
+  <script>!function(){var t=localStorage.getItem('maintainiq-theme');if(!t&&(t=window.matchMedia('(prefers-color-scheme:light)').matches?'light':'dark'),'light'===t)document.documentElement.setAttribute('data-theme','light')}();</script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Asset Details | MaintainIQ</title>
@@ -25,6 +26,22 @@
         MaintainIQ
       </a>
       <div class="nav-actions">
+        <button class="theme-toggle" id="theme-toggle" aria-label="Switch to light mode" onclick="toggleTheme()">
+          <svg class="theme-icon-sun" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+          <svg class="theme-icon-moon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+        </button>
         <a href="../../index.html" class="btn btn-emerald">Back to Home</a>
         <button class="mobile-menu-toggle" id="mobile-menu-toggle" aria-label="Toggle Mobile Menu"
           aria-expanded="false">
@@ -65,6 +82,23 @@
         <li><a href="../../index.html" class="mobile-drawer-link">Home</a></li>
       </ul>
       <div class="mobile-drawer-actions">
+        <button class="theme-toggle" style="width: 100%; justify-content: center;" aria-label="Switch to light mode" onclick="toggleTheme()">
+          <svg class="theme-icon-sun" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 18px; height: 18px;">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+          <svg class="theme-icon-moon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 18px; height: 18px;">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+          <span style="font-size: 0.95rem; font-weight: 600;">Toggle Theme</span>
+        </button>
         <a href="../../index.html" class="btn btn-emerald" style="width: 100%; text-align: center;">Back to Home</a>
       </div>
     </div>
@@ -138,6 +172,7 @@
     </div>
   </footer>
 
+  <script type="module" src="../../js/app.js"></script>
   <script type="module" src="../../js/index.js"></script>
   <script type="module" src="../../js/public/index.js"></script>
 </body>

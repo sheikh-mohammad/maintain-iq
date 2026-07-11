@@ -349,3 +349,74 @@ function initSmoothScroll() {
 
   window.addEventListener('scroll', highlightNav);
 }
+
+/* ==========================================================================
+   8. Theme Toggle (Dark / Light Mode)
+   ========================================================================== */
+
+const THEME_KEY = 'maintainiq-theme';
+
+function getStoredTheme() {
+  return localStorage.getItem(THEME_KEY);
+}
+
+function getSystemTheme() {
+  return window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+}
+
+function resolveTheme() {
+  return getStoredTheme() || getSystemTheme();
+}
+
+function applyTheme(theme) {
+  if (theme === 'light') {
+    document.documentElement.setAttribute('data-theme', 'light');
+  } else {
+    document.documentElement.removeAttribute('data-theme');
+  }
+}
+
+function storeTheme(theme) {
+  localStorage.setItem(THEME_KEY, theme);
+}
+
+function toggleTheme() {
+  const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+  const newTheme = isLight ? 'dark' : 'light';
+
+  // Enable smooth transition
+  document.documentElement.classList.add('theme-transitioning');
+  applyTheme(newTheme);
+  storeTheme(newTheme);
+  updateToggleButtons(newTheme);
+
+  setTimeout(() => {
+    document.documentElement.classList.remove('theme-transitioning');
+  }, 400);
+}
+
+function updateToggleButtons(theme) {
+  // The toggle buttons show/hide icons via CSS, but we update aria-label
+  const buttons = document.querySelectorAll('.theme-toggle');
+  const isLight = theme === 'light';
+  buttons.forEach(btn => {
+    btn.setAttribute('aria-label', isLight ? 'Switch to dark mode' : 'Switch to light mode');
+  });
+}
+
+// Listen for system preference changes (only if user hasn't set a preference)
+window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', (e) => {
+  if (!getStoredTheme()) {
+    const transitioning = document.documentElement.classList.contains('theme-transitioning');
+    if (!transitioning) document.documentElement.classList.add('theme-transitioning');
+    applyTheme(e.matches ? 'light' : 'dark');
+    updateToggleButtons(e.matches ? 'light' : 'dark');
+    if (!transitioning) {
+      setTimeout(() => document.documentElement.classList.remove('theme-transitioning'), 400);
+    }
+  }
+});
+
+// Expose toggle function globally for onclick handlers
+window.toggleTheme = toggleTheme;
+
