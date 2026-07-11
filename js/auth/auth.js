@@ -155,6 +155,23 @@ export function getTechSession() {
   }
 }
 
+/* ── History Log Helper ───────────────────────────────────────────────── */
+
+export async function createHistoryLog({ asset_code, asset_name, action, actor, detail, issue_id }) {
+  try {
+    await supabase.from('history_log').insert({
+      asset_code: asset_code || null,
+      asset_name: asset_name || null,
+      action,
+      actor,
+      detail: detail || '',
+      issue_id: issue_id || null,
+    })
+  } catch (err) {
+    console.warn('Failed to create history entry:', err)
+  }
+}
+
 /* ── Main site navbar ──────────────────────────────────────────────────── */
 
 function updateMainNavbar(user) {

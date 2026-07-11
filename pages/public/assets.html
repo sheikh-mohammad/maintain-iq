@@ -130,6 +130,60 @@
 
         <!-- Assets Grid -->
         <div class="public-assets-grid" id="assets-grid" style="display:none;"></div>
+
+        <!-- Single Asset Detail View (shown when QR scanned) -->
+        <div class="public-asset-detail" id="asset-detail" style="display:none;">
+          <button class="btn btn-secondary" id="btn-back-to-assets" style="margin-bottom: 1.5rem;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 0.35rem;"><path d="M19 12H5M12 19l-7-7 7-7"></path></svg>
+            Back to All Assets
+          </button>
+
+          <div class="asset-detail-card" id="asset-detail-card">
+            <!-- Header -->
+            <div class="asset-detail-header">
+              <div>
+                <h2 id="detail-asset-name">—</h2>
+                <span class="public-asset-code" id="detail-asset-code">Code: —</span>
+              </div>
+              <span class="badge" id="detail-asset-status">—</span>
+            </div>
+
+            <!-- Meta Grid -->
+            <div class="asset-detail-meta">
+              <div class="detail-meta-item">
+                <label>Category</label>
+                <span id="detail-asset-category">—</span>
+              </div>
+              <div class="detail-meta-item">
+                <label>Location</label>
+                <span id="detail-asset-location">—</span>
+              </div>
+              <div class="detail-meta-item">
+                <label>Condition</label>
+                <span id="detail-asset-condition">—</span>
+              </div>
+            </div>
+
+            <!-- QR Code -->
+            <div class="asset-detail-qr-section">
+              <div id="detail-asset-qr"></div>
+              <p class="asset-detail-qr-hint">Scan this QR code to return to this page</p>
+            </div>
+
+            <!-- Report Button -->
+            <button class="btn btn-primary" id="btn-report-from-detail" style="width:100%;">
+              Report Issue for This Asset
+            </button>
+          </div>
+
+          <!-- Activity / Maintenance History -->
+          <div class="asset-detail-history" id="asset-detail-history">
+            <h3>Activity History</h3>
+            <div id="detail-history-timeline">
+              <p class="text-gray">No activity recorded yet.</p>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
   </main>

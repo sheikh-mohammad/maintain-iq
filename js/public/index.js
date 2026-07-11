@@ -4,12 +4,152 @@
    Each asset has a Report Issue button that opens a modal.
    ========================================================================== */
 
-import { supabase, showToast } from '../auth/auth.js'
+import { supabase, showToast, createHistoryLog } from '../auth/auth.js'
 
 document.addEventListener('DOMContentLoaded', () => {
-  loadAllAssets()
+  const scannedCode = window.location.hash.replace('#', '').trim()
+
+  if (scannedCode) {
+    loadSingleAsset(scannedCode)
+  } else {
+    loadAllAssets()
+  }
+
   initReportModal()
 })
+
+/* ── Load single asset from QR scan ───────────────────────────────────── */
+
+async function loadSingleAsset(assetCode) {
+  const loading = document.getElementById('assets-loading')
+  const empty = document.getElementById('assets-empty')
+  const grid = document.getElementById('assets-grid')
+  const detail = document.getElementById('asset-detail')
+
+  loading.style.display = 'block'
+
+  const { data: asset, error } = await supabase
+    .from('assets')
+    .select('*')
+    .eq('assetCode', assetCode)
+    .maybeSingle()
+
+  loading.style.display = 'none'
+
+  if (error || !asset) {
+    empty.style.display = 'block'
+    empty.querySelector('h2').textContent = 'Asset Not Found'
+    empty.querySelector('p').textContent = `No asset found with code "${assetCode}". The asset may have been removed or the QR code is invalid.`
+    return
+  }
+
+  // Show detail view
+  detail.style.display = 'block'
+  populateAssetDetail(asset)
+
+  // Load activity history
+  loadAssetHistory(asset.assetCode)
+
+  // Wire back button
+  document.getElementById('btn-back-to-assets').addEventListener('click', () => {
+    window.location.hash = ''
+    detail.style.display = 'none'
+    grid.style.display = 'grid'
+    loadAllAssets()
+  })
+
+  // Wire report button
+  document.getElementById('btn-report-from-detail').addEventListener('click', () => {
+    openReportModal(asset.assetCode, asset.name)
+  })
+}
+
+function populateAssetDetail(asset) {
+  document.getElementById('detail-asset-name').textContent = asset.name
+  document.getElementById('detail-asset-code').textContent = `Code: ${asset.assetCode}`
+  document.getElementById('detail-asset-category').textContent = asset.category || '—'
+  document.getElementById('detail-asset-location').textContent = asset.location || '—'
+  document.getElementById('detail-asset-condition').textContent = asset.condition || '—'
+  const techEl = document.getElementById('detail-asset-tech')
+  if (techEl) techEl.style.display = 'none'
+
+  const statusEl = document.getElementById('detail-asset-status')
+  const statusClass = asset.status === 'Operational' ? 'badge-emerald'
+    : asset.status === 'Issue Reported' ? 'badge-orange'
+    : asset.status === 'Under Maintenance' ? 'badge-purple'
+    : 'badge-red'
+  statusEl.textContent = asset.status
+  statusEl.className = `badge ${statusClass}`
+
+  // Generate QR
+  const qrContainer = document.getElementById('detail-asset-qr')
+  qrContainer.innerHTML = ''
+  const url = `${window.location.origin}/pages/public/assets.html#${asset.assetCode}`
+  new QRCode(qrContainer, { text: url, width: 150, height: 150 })
+}
+
+async function loadAssetHistory(assetCode) {
+  const container = document.getElementById('detail-history-timeline')
+
+  // Load issues for this asset
+  const { data: issues } = await supabase
+    .from('issues')
+    .select('*')
+    .eq('assetId', assetCode)
+    .order('created_at', { ascending: false })
+    .limit(10)
+
+  // Load maintenance records for this asset
+  const { data: records } = await supabase
+    .from('maintenance_records')
+    .select('*')
+    .eq('asset_id', assetCode)
+    .order('created_at', { ascending: false })
+    .limit(10)
+
+  const events = []
+
+  if (issues) {
+    issues.forEach(i => {
+      events.push({
+        date: i.created_at,
+        type: 'issue',
+        title: i.title,
+        detail: `${i.priority} priority — ${i.status}`,
+      })
+    })
+  }
+
+  if (records) {
+    records.forEach(r => {
+      events.push({
+        date: r.created_at,
+        type: 'maintenance',
+        title: r.actions_taken || 'Maintenance performed',
+        detail: r.status === 'Completed' ? `Completed — $${r.cost}` : r.status,
+      })
+    })
+  }
+
+  // Sort by date descending
+  events.sort((a, b) => new Date(b.date) - new Date(a.date))
+
+  if (events.length === 0) {
+    container.innerHTML = '<p class="text-gray">No activity recorded yet for this asset.</p>'
+    return
+  }
+
+  container.innerHTML = events.map(e => `
+    <div class="history-event">
+      <div class="history-event-dot ${e.type === 'issue' ? 'dot-issue' : 'dot-maintenance'}"></div>
+      <div class="history-event-content">
+        <span class="history-event-title">${e.title}</span>
+        <span class="history-event-detail">${e.detail}</span>
+        <span class="history-event-date">${new Date(e.date).toLocaleDateString()}</span>
+      </div>
+    </div>
+  `).join('')
+}
 
 /* ── Load & display all assets ──────────────────────────────────────────── */
 
@@ -55,7 +195,7 @@ async function loadAllAssets() {
         <div class="public-asset-meta">
           <span><strong>Category:</strong> ${a.category || '—'}</span>
           <span><strong>Location:</strong> ${a.location || '—'}</span>
-          <span><strong>Technician:</strong> ${a.assignedTechnician || 'Not assigned'}</span>
+          <span><strong>Condition:</strong> ${a.condition || '—'}</span>
         </div>
 
         <div class="public-asset-qr" id="qr-${a.assetCode}"></div>
@@ -180,8 +320,30 @@ async function handleSubmitReport() {
 
     if (error) throw error
 
+    // Update asset status to "Issue Reported"
+    await supabase
+      .from('assets')
+      .update({ status: 'Issue Reported' })
+      .eq('assetCode', assetCode)
+
+    // Log history
+    const assetName = document.getElementById('report-asset-display').value.split(' (Code:')[0] || assetCode
+    createHistoryLog({
+      asset_code: String(assetCode),
+      asset_name: assetName,
+      action: 'Issue Reported',
+      actor: reporterEmail,
+      detail: `${title} — ${priority}`,
+    })
+
     showToast('Issue reported successfully!', 'success')
     closeModal('modal-report-issue')
+
+    // If we're on the detail view, refresh it
+    const detail = document.getElementById('asset-detail')
+    if (detail.style.display !== 'none') {
+      loadSingleAsset(assetCode)
+    }
   } catch (err) {
     showToast(err.message, 'error')
   } finally {

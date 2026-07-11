@@ -298,6 +298,155 @@
   cursor: default;
 }
 
+/* ===== Single Asset Detail View (from QR scan) ===== */
+
+.asset-detail-card {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-light);
+  border-radius: 16px;
+  padding: 2rem;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.asset-detail-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.asset-detail-header h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-white);
+  margin: 0 0 0.25rem;
+}
+
+.asset-detail-meta {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.detail-meta-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.detail-meta-item label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  color: var(--text-gray-500);
+  font-weight: 600;
+  letter-spacing: 0.03em;
+}
+
+.detail-meta-item span {
+  font-size: 0.9375rem;
+  color: var(--text-gray-200);
+  font-weight: 500;
+}
+
+.asset-detail-qr-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding: 1.5rem;
+  background: var(--bg-tertiary);
+  border-radius: 12px;
+}
+
+.asset-detail-qr-section canvas,
+.asset-detail-qr-section img {
+  border-radius: 8px;
+  padding: 8px;
+  background: #fff;
+}
+
+.asset-detail-qr-hint {
+  font-size: 0.8rem;
+  color: var(--text-gray-500);
+  margin: 0.75rem 0 0;
+}
+
+/* Activity History */
+
+.asset-detail-history {
+  max-width: 600px;
+  margin: 2rem auto 0;
+}
+
+.asset-detail-history h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-white);
+  margin: 0 0 1rem;
+}
+
+.history-event {
+  display: flex;
+  gap: 0.75rem;
+  padding: 0.75rem 0;
+  border-left: 2px solid var(--border-subtle);
+  padding-left: 1.25rem;
+  position: relative;
+  margin-left: 0.5rem;
+}
+
+.history-event:last-child {
+  border-left-color: transparent;
+}
+
+.history-event-dot {
+  position: absolute;
+  left: -6px;
+  top: 0.85rem;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--border-subtle);
+}
+
+.history-event-dot.dot-issue {
+  background: var(--accent-orange, #f59e0b);
+}
+
+.history-event-dot.dot-maintenance {
+  background: var(--accent-emerald);
+}
+
+.history-event-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.history-event-title {
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--text-white);
+}
+
+.history-event-detail {
+  font-size: 0.8125rem;
+  color: var(--text-gray-400);
+}
+
+.history-event-date {
+  font-size: 0.75rem;
+  color: var(--text-gray-500);
+}
+
+.text-gray {
+  color: var(--text-gray-400);
+  font-size: 0.9375rem;
+}
+
 /* ===== Responsive ===== */
 
 @media (max-width: 640px) {

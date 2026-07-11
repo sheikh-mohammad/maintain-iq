@@ -512,6 +512,29 @@ select.form-input {
   color: var(--accent-blue);
 }
 
+/* --- Admin Status Select --- */
+.admin-status-select {
+  padding: 0.375rem 0.5rem;
+  font-size: 0.8125rem;
+  border-radius: 6px;
+  border: 1px solid var(--border-light);
+  background: var(--bg-tertiary);
+  color: var(--text-gray-300);
+  cursor: pointer;
+  font-family: var(--font-sans);
+  max-width: 150px;
+  outline: none;
+  transition: border-color var(--transition-fast);
+}
+
+.admin-status-select:focus {
+  border-color: var(--accent-blue);
+}
+
+.admin-status-select:hover {
+  border-color: var(--accent-blue);
+}
+
 /* --- History / Audit Log --- */
 
 .history-log-card {
