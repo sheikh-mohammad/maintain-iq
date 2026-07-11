@@ -6,9 +6,9 @@ import { supabase, showToast, redirectAfterAuth } from './auth.js'
 
 document.addEventListener('DOMContentLoaded', () => {
   // Already logged in? Redirect based on role.
-  supabase.auth.getSession().then(({ data: { session } }) => {
+  supabase.auth.getSession().then(async ({ data: { session } }) => {
     if (session) {
-      redirectAfterAuth(session.user)
+      await redirectAfterAuth(session.user)
     }
   })
 

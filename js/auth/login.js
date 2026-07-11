@@ -2,15 +2,27 @@
    MaintainIQ - Login Page Handler
    ========================================================================== */
 
-import { supabase, showToast, redirectAfterAuth } from './auth.js'
+import { supabase, showToast } from './auth.js'
+
+const TECH_SESSION_KEY = 'maintainiq-tech-session'
 
 document.addEventListener('DOMContentLoaded', () => {
-  // Already logged in? Redirect based on role.
-  supabase.auth.getSession().then(({ data: { session } }) => {
+  // Already logged in via Supabase Auth?
+  supabase.auth.getSession().then(async ({ data: { session } }) => {
     if (session) {
-      redirectAfterAuth(session.user)
+      window.location.href = '/'
+      return
     }
   })
+
+  // Already logged in via tech session?
+  const techSession = localStorage.getItem(TECH_SESSION_KEY)
+  if (techSession) {
+    try {
+      const s = JSON.parse(techSession)
+      if (s.email) window.location.href = '/pages/private/technician/index.html'
+    } catch { /* ignore */ }
+  }
 
   initLoginForm()
 })
@@ -39,13 +51,40 @@ async function handleLogin(e) {
   submitBtn.disabled = true
 
   try {
-    const { data, error } = await supabase.auth.signInWithPassword({ email, password })
+    // 1. First check: technician login (email + password in technicians table)
+    const { data: tech } = await supabase
+      .from('technicians')
+      .select('email, full_name, specialty')
+      .eq('email', email)
+      .eq('password', password)
+      .maybeSingle()
 
+    if (tech) {
+      // Manual tech session
+      localStorage.setItem(TECH_SESSION_KEY, JSON.stringify({
+        email: tech.email,
+        name: tech.full_name,
+        specialty: tech.specialty,
+      }))
+      showToast(`Welcome, ${tech.full_name}!`, 'success')
+      setTimeout(() => {
+        window.location.href = '/pages/private/technician/index.html'
+      }, 200)
+      return
+    }
+
+    // 2. Second check: Supabase Auth login (admin / regular users)
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password })
     if (error) throw error
 
     showToast('Signed in successfully!', 'success')
-    // Give the toast a moment to show before redirect
-    setTimeout(() => redirectAfterAuth(data.user), 200)
+
+    // 3. Redirect based on role
+    if (data.user?.email === 'admin@admin.com') {
+      setTimeout(() => { window.location.href = '/pages/private/admin/index.html' }, 200)
+    } else {
+      setTimeout(() => { window.location.href = '/' }, 200)
+    }
   } catch (err) {
     showToast(err.message, 'error')
     submitBtn.textContent = originalText

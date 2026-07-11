@@ -10,6 +10,7 @@ const { createClient } = window.supabase
 export const supabase = createClient(PROJECT_URL, PUBLISH_KEY)
 
 const USER_CACHE_KEY = 'maintainiq-user'
+const TECH_SESSION_KEY = 'maintainiq-tech-session'
 
 /* ── Admin check ───────────────────────────────────────────────────────── */
 
@@ -43,12 +44,27 @@ export function showToast(message, type = 'info', duration = 3500) {
 
 /* ── Role-based redirect after login/signup ────────────────────────────── */
 
-export function redirectAfterAuth(user) {
+export async function redirectAfterAuth(user) {
+  // Admin check
   if (isAdmin(user)) {
     window.location.href = '/pages/private/admin/index.html'
-  } else {
-    window.location.href = '/'
+    return
   }
+
+  // Technician check — look up email in technicians table
+  const { data: tech } = await supabase
+    .from('technicians')
+    .select('id')
+    .eq('email', user.email)
+    .maybeSingle()
+
+  if (tech) {
+    window.location.href = '/pages/private/technician/index.html'
+    return
+  }
+
+  // Regular user → home
+  window.location.href = '/'
 }
 
 /* ── Sign out (Supabase docs pattern) ──────────────────────────────────── */
@@ -95,8 +111,9 @@ export async function signOutUser() {
     console.warn('Supabase signOut network error (session still cleared locally):', err)
   }
 
-  // 3. Remove our own cache
+  // 3. Remove our own caches
   localStorage.removeItem(USER_CACHE_KEY)
+  localStorage.removeItem(TECH_SESSION_KEY)
 
   // 4. Go home
   window.location.href = '/'
@@ -105,13 +122,26 @@ export async function signOutUser() {
 /* ── Auto-init on every page ─────────────────────────────────────────── */
 
 document.addEventListener('DOMContentLoaded', async () => {
+  // Check both Supabase auth session and manual tech session
   const { data: { session } } = await supabase.auth.getSession()
-  syncUserCache(session?.user ?? null)
+  const techSession = getTechSession()
 
-  updateMainNavbar(session?.user ?? null)
-  updateAdminTopbar(session?.user ?? null)
-  updateMobileDrawer(session?.user ?? null)
-  updateAssetsPageBtn(session?.user ?? null)
+  let user = null
+  if (session?.user) {
+    syncUserCache(session.user)
+    user = session.user
+  } else if (techSession) {
+    // Build a fake user object from tech session for navbar display
+    user = {
+      email: techSession.email,
+      user_metadata: { full_name: techSession.name },
+    }
+  }
+
+  updateMainNavbar(user)
+  updateAdminTopbar(user)
+  updateMobileDrawer(user)
+  updateAssetsPageBtn(user)
 })
 
 /* ── localStorage cache ──────────────────────────────────────────────── */
@@ -130,7 +160,28 @@ function syncUserCache(user) {
 
 export function getCachedUser() {
   try {
-    return JSON.parse(localStorage.getItem(USER_CACHE_KEY))
+    // 1. Check Supabase auth user
+    const cached = JSON.parse(localStorage.getItem(USER_CACHE_KEY))
+    if (cached) return cached
+
+    // 2. Check manual tech session
+    const techSession = JSON.parse(localStorage.getItem(TECH_SESSION_KEY))
+    if (techSession) {
+      return {
+        id: null,
+        email: techSession.email,
+        name: techSession.name,
+      }
+    }
+  } catch {
+    // ignore
+  }
+  return null
+}
+
+export function getTechSession() {
+  try {
+    return JSON.parse(localStorage.getItem(TECH_SESSION_KEY))
   } catch {
     return null
   }
