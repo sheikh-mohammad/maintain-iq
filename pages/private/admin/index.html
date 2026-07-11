@@ -53,6 +53,12 @@
               </a>
             </li>
             <li>
+              <a href="#" class="sidebar-link" data-page="history">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                <span>History</span>
+              </a>
+            </li>
+            <li>
               <a href="#" class="sidebar-link" data-page="analytics">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 20V10M12 20V4M6 20v-6"></path></svg>
                 <span>Analytics</span>
@@ -265,6 +271,35 @@
             </div>
             <div style="margin-top: 1rem; text-align: center;">
               <button class="btn btn-emerald" id="btn-create-technician">+ Add Technician</button>
+            </div>
+          </section>
+
+          <!-- ==================== HISTORY ==================== -->
+          <section class="admin-page" id="page-history">
+            <div class="admin-page-header">
+              <h3>Asset History</h3>
+              <p>Immutable audit log — every event is automatically recorded and cannot be edited or deleted.</p>
+            </div>
+            <div class="history-log-card">
+              <div class="history-log-header">
+                <div class="history-log-legend">
+                  <span class="history-legend-dot dot-create"></span> Created
+                  <span class="history-legend-dot dot-update"></span> Updated
+                  <span class="history-legend-dot dot-issue"></span> Issue
+                  <span class="history-legend-dot dot-resolve"></span> Resolved
+                </div>
+              </div>
+              <div class="history-timeline" id="history-timeline">
+                <!-- Empty state — shown until data exists -->
+                <div class="history-empty">
+                  <svg class="history-empty-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                  </svg>
+                  <h4>No History Yet</h4>
+                  <p>Events will automatically appear here as assets are created, issues are reported, and maintenance actions are completed.</p>
+                </div>
+              </div>
             </div>
           </section>
 
