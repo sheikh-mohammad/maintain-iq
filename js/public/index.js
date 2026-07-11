@@ -4,9 +4,16 @@
    Each asset has a Report Issue button that opens a modal.
    ========================================================================== */
 
-import { supabase, showToast, createHistoryLog } from '../auth/auth.js'
+import { supabase, showToast, createHistoryLog, getCachedUser } from '../auth/auth.js'
 
-document.addEventListener('DOMContentLoaded', () => {
+let isLoggedIn = false
+
+document.addEventListener('DOMContentLoaded', async () => {
+  // Check if user is logged in
+  const cached = getCachedUser()
+  const { data: { session } } = await supabase.auth.getSession()
+  isLoggedIn = !!(cached || session)
+
   const scannedCode = window.location.hash.replace('#', '').trim()
 
   if (scannedCode) {
@@ -15,7 +22,9 @@ document.addEventListener('DOMContentLoaded', () => {
     loadAllAssets()
   }
 
-  initReportModal()
+  if (isLoggedIn) {
+    initReportModal()
+  }
 })
 
 /* ── Load single asset from QR scan ───────────────────────────────────── */
@@ -58,10 +67,18 @@ async function loadSingleAsset(assetCode) {
     loadAllAssets()
   })
 
-  // Wire report button
-  document.getElementById('btn-report-from-detail').addEventListener('click', () => {
-    openReportModal(asset.assetCode, asset.name)
-  })
+  // Wire report button (only if logged in)
+  const reportBtn = document.getElementById('btn-report-from-detail')
+  if (isLoggedIn) {
+    reportBtn.textContent = 'Report Issue for This Asset'
+    reportBtn.className = 'btn btn-primary'
+    reportBtn.onclick = () => openReportModal(asset.assetCode, asset.name)
+  } else {
+    reportBtn.textContent = 'Sign in to Report Issue'
+    reportBtn.className = 'btn btn-secondary'
+    reportBtn.onclick = () => { window.location.href = '../auth/login.html' }
+  }
+  reportBtn.style.display = ''
 }
 
 function populateAssetDetail(asset) {
@@ -200,9 +217,13 @@ async function loadAllAssets() {
 
         <div class="public-asset-qr" id="qr-${a.assetCode}"></div>
 
-        <button class="btn btn-primary report-issue-btn" data-code="${a.assetCode}" data-name="${a.name}">
-          Report Issue
-        </button>
+        ${isLoggedIn
+          ? `<button class="btn btn-primary report-issue-btn" data-code="${a.assetCode}" data-name="${a.name}">
+              Report Issue
+            </button>`
+          : `<a href="../auth/login.html" class="btn btn-secondary" style="width:100%;justify-content:center;text-decoration:none;">
+              Sign in to Report Issue
+            </a>`}
       </div>
     `
   }).join('')
