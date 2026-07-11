@@ -1,9 +1,10 @@
 /* ==========================================================================
-   MaintainIQ - Interactive UI Scripts (app.js)
+   MaintainIQ - Homepage Main Script (index.js)
    ========================================================================== */
 
 document.addEventListener('DOMContentLoaded', () => {
   initStickyNavbar();
+  initMobileDrawer();
   initHeroPreviewHover();
   initAiSimulation();
   initDashboardMockupTabs();
@@ -26,22 +27,60 @@ function initStickyNavbar() {
   };
 
   window.addEventListener('scroll', handleScroll);
-  // Initial check in case page is loaded scrolled down
   handleScroll();
 }
 
-/* --- 2. Hero Interactive Hover Effects --- */
+/* --- 2. Responsive Mobile Drawer (Sidebar Menu) --- */
+function initMobileDrawer() {
+  const toggleBtn = document.getElementById('mobile-menu-toggle');
+  const closeBtn = document.getElementById('mobile-menu-close');
+  const drawer = document.getElementById('mobile-drawer');
+  const overlay = document.getElementById('mobile-drawer-overlay');
+  const drawerLinks = document.querySelectorAll('.mobile-drawer-link');
+
+  if (!toggleBtn || !drawer || !overlay) return;
+
+  const openDrawer = () => {
+    drawer.classList.add('active');
+    overlay.classList.add('active');
+    toggleBtn.setAttribute('aria-expanded', 'true');
+    document.body.style.overflow = 'hidden'; // Prevent background scrolling
+  };
+
+  const closeDrawer = () => {
+    drawer.classList.remove('active');
+    overlay.classList.remove('active');
+    toggleBtn.setAttribute('aria-expanded', 'false');
+    document.body.style.overflow = ''; // Restore scrolling
+  };
+
+  toggleBtn.addEventListener('click', openDrawer);
+  closeBtn?.addEventListener('click', closeDrawer);
+  overlay.addEventListener('click', closeDrawer);
+
+  // Close drawer when clicking any link inside
+  drawerLinks.forEach(link => {
+    link.addEventListener('click', closeDrawer);
+  });
+
+  // Keyboard accessibility: ESC key closes drawer
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && drawer.classList.contains('active')) {
+      closeDrawer();
+    }
+  });
+}
+
+/* --- 3. Hero Interactive Hover Effects --- */
 function initHeroPreviewHover() {
   const previewWrapper = document.getElementById('hero-preview-wrapper');
   if (!previewWrapper) return;
 
-  // Add interactive hover rotation effect following mouse slightly
   previewWrapper.addEventListener('mousemove', (e) => {
     const rect = previewWrapper.getBoundingClientRect();
     const x = e.clientX - rect.left - rect.width / 2;
     const y = e.clientY - rect.top - rect.height / 2;
     
-    // Convert coordinate offsets to degree rotations
     const rotateX = -y / 15;
     const rotateY = x / 15;
     
@@ -58,7 +97,7 @@ function initHeroPreviewHover() {
   });
 }
 
-/* --- 3. AI Triage Simulation Widget --- */
+/* --- 4. AI Triage Simulation Widget --- */
 function initAiSimulation() {
   const runBtn = document.getElementById('btn-run-simulation');
   const textContainer = document.getElementById('typed-complaint');
@@ -83,16 +122,14 @@ function initAiSimulation() {
     let index = 0;
     const typingInterval = setInterval(() => {
       if (index < complaintText.length) {
-        // Insert character before cursor
         const char = complaintText.charAt(index);
         textContainer.insertBefore(document.createTextNode(char), document.getElementById('typing-cursor'));
         index++;
       } else {
         clearInterval(typingInterval);
         
-        // Brief loading delay representing AI thinking
+        // 1 second lag simulating network request and AI diagnosis
         setTimeout(() => {
-          // Reveal structured diagnostics with slide animation
           triageOutput.style.display = 'flex';
           
           runBtn.textContent = 'Analysis Complete';
@@ -102,7 +139,6 @@ function initAiSimulation() {
           runBtn.style.border = '1px solid rgba(16, 185, 129, 0.3)';
           
           setTimeout(() => {
-            // Restore button after showing success state
             runBtn.textContent = 'Run AI Analysis';
             runBtn.style.background = '';
             runBtn.style.color = '';
@@ -112,12 +148,11 @@ function initAiSimulation() {
           }, 4000);
         }, 1000);
       }
-    }, 55); // Typing speed
+    }, 55);
   };
 
   runBtn.addEventListener('click', runSimulation);
 
-  // Trigger automatically when the AI section is scrolled into view (once)
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting && !isRunning) {
@@ -130,7 +165,7 @@ function initAiSimulation() {
   observer.observe(document.getElementById('ai-triage'));
 }
 
-/* --- 4. Browser Mockup Tabs --- */
+/* --- 5. Browser Mockup Tabs --- */
 function initDashboardMockupTabs() {
   const tabs = document.querySelectorAll('.browser-tab');
   const contents = document.querySelectorAll('.mockup-content');
@@ -139,19 +174,16 @@ function initDashboardMockupTabs() {
   if (!tabs.length) return;
 
   const switchTab = (targetId) => {
-    // Reset all tabs & contents
     tabs.forEach(t => t.classList.remove('active'));
     contents.forEach(c => c.classList.remove('active'));
     sidebarLinks.forEach(l => l.classList.remove('active'));
 
-    // Activate selected
     const activeTabButton = document.querySelector(`[data-target="${targetId}"]`);
     const activeContent = document.getElementById(targetId);
     
     if (activeTabButton) activeTabButton.classList.add('active');
     if (activeContent) activeContent.classList.add('active');
 
-    // Sync sidebar link highlight
     if (targetId === 'mockup-tab-assets') {
       document.getElementById('mock-nav-assets')?.classList.add('active');
       document.getElementById('mock-nav-dashboard')?.classList.add('active');
@@ -170,7 +202,6 @@ function initDashboardMockupTabs() {
     });
   });
 
-  // Connect sidebar links to mockup tabs for cohesive experience
   document.getElementById('mock-nav-assets')?.addEventListener('click', (e) => {
     e.preventDefault();
     switchTab('mockup-tab-assets');
@@ -183,11 +214,11 @@ function initDashboardMockupTabs() {
 
   document.getElementById('mock-nav-dashboard')?.addEventListener('click', (e) => {
     e.preventDefault();
-    switchTab('mockup-tab-assets'); // Default tab
+    switchTab('mockup-tab-assets');
   });
 }
 
-/* --- 5. Scroll triggered Statistics Counter --- */
+/* --- 6. Stats Counter --- */
 function initStatsCounter() {
   const statsSection = document.getElementById('stats');
   if (!statsSection) return;
@@ -212,7 +243,6 @@ function initStatsCounter() {
         const elapsedTime = currentTime - startTime;
         const progress = Math.min(elapsedTime / stat.duration, 1);
         
-        // Easing function outQuad
         const easeProgress = progress * (2 - progress);
         const currentValue = Math.floor(easeProgress * stat.end);
         
@@ -242,7 +272,7 @@ function initStatsCounter() {
   observer.observe(statsSection);
 }
 
-/* --- 6. Pricing Toggle (Monthly vs Annual) --- */
+/* --- 7. Pricing Toggle --- */
 function initPricingToggle() {
   const toggleBtn = document.getElementById('billing-toggle');
   const monthlyLabel = document.getElementById('billing-monthly-label');
@@ -264,13 +294,11 @@ function initPricingToggle() {
   const updatePricing = () => {
     isAnnual = !isAnnual;
     
-    // Toggle class and active styling labels
     if (isAnnual) {
       toggleBtn.classList.add('active');
       annualLabel.classList.add('active');
       monthlyLabel.classList.remove('active');
       
-      // Animate price values change
       animatePriceChange(priceStarter, pricingData.annual.starter);
       animatePriceChange(pricePro, pricingData.annual.pro);
       animatePriceChange(priceEnterprise, pricingData.annual.enterprise);
@@ -302,7 +330,7 @@ function initPricingToggle() {
   annualLabel.addEventListener('click', () => { if (!isAnnual) updatePricing(); });
 }
 
-/* --- 7. Smooth Scroll Navigation --- */
+/* --- 8. Smooth Scroll Navigation --- */
 function initSmoothScroll() {
   document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function(e) {
@@ -312,7 +340,7 @@ function initSmoothScroll() {
       
       const targetElement = document.querySelector(targetId);
       if (targetElement) {
-        const offset = 80; // Offset for header height
+        const offset = 80;
         const elementPosition = targetElement.getBoundingClientRect().top;
         const offsetPosition = elementPosition + window.pageYOffset - offset;
         
@@ -324,7 +352,6 @@ function initSmoothScroll() {
     });
   });
 
-  // Track active section to highlight current navigation item
   const sections = document.querySelectorAll('section');
   const navLinks = document.querySelectorAll('.nav-links a');
 

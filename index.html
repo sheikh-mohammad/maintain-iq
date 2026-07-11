@@ -3,17 +3,1101 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title></title>
+    <title>MaintainIQ | AI-Powered QR Maintenance & Asset History Platform</title>
+    <meta name="description" content="MaintainIQ is an enterprise-grade AI-powered QR Maintenance & Asset History Platform. Register assets, generate QR codes, report issues instantly, and triage repairs with smart AI diagnostics." />
+    <!-- Style Sheets -->
+    <link rel="stylesheet" href="./css/style.css" />
+    <link rel="stylesheet" href="./css/index.css" />
   </head>
 
   <body>
-    <script type="module" src="./js/app.js"></script>
-    <script type="module" src="./js/config/config.js"></script>
-    <!-- <script type="module" src="./js/config/config.js"></script> -->
-    <script type="module" src="./js/config/example.config.js"></script>
-    <!-- <script src="./js/example.config.js"></script> -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <!-- //or -->
-    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <!-- 1. Sticky Navbar -->
+    <header class="navbar" id="navbar">
+      <div class="container">
+        <a href="#" class="logo" id="nav-logo" aria-label="MaintainIQ Homepage">
+          <div class="logo-icon" aria-hidden="true">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 18px; height: 18px;">
+              <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+            </svg>
+          </div>
+          MaintainIQ
+        </a>
+        <nav aria-label="Main Navigation">
+          <ul class="nav-links">
+            <li><a href="#features" id="nav-link-features">Features</a></li>
+            <li><a href="#workflow" id="nav-link-solutions">Solutions</a></li>
+            <li><a href="#ai-triage" id="nav-link-ai">AI Diagnostics</a></li>
+
+            <li><a href="#docs" id="nav-link-docs">Docs</a></li>
+          </ul>
+        </nav>
+        <div class="nav-actions">
+          <a href="#" class="btn btn-secondary" id="btn-signin">Sign In</a>
+          <a href="#" class="btn btn-emerald" id="btn-getstarted-nav">Get Started</a>
+          <!-- Mobile Menu Hamburger Button -->
+          <button class="mobile-menu-toggle" id="mobile-menu-toggle" aria-label="Toggle Mobile Menu" aria-expanded="false">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 24px; height: 24px;">
+              <line x1="3" y1="12" x2="21" y2="12" id="line-mid"></line>
+              <line x1="3" y1="6" x2="21" y2="6" id="line-top"></line>
+              <line x1="3" y1="18" x2="21" y2="18" id="line-bot"></line>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Mobile Navigation Sidebar Drawer -->
+    <div class="mobile-drawer-overlay" id="mobile-drawer-overlay" aria-hidden="true"></div>
+    <div class="mobile-drawer" id="mobile-drawer" aria-label="Mobile Navigation Menu" role="dialog" aria-modal="true">
+      <div class="mobile-drawer-header">
+        <a href="#" class="logo" id="drawer-logo">
+          <div class="logo-icon" aria-hidden="true">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 18px; height: 18px;">
+              <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+            </svg>
+          </div>
+          MaintainIQ
+        </a>
+        <button class="mobile-menu-close" id="mobile-menu-close" aria-label="Close Mobile Menu">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 24px; height: 24px;">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      <div class="mobile-drawer-body">
+        <ul class="mobile-drawer-links">
+          <li><a href="#features" class="mobile-drawer-link">Features</a></li>
+          <li><a href="#workflow" class="mobile-drawer-link">Solutions</a></li>
+          <li><a href="#ai-triage" class="mobile-drawer-link">AI Diagnostics</a></li>
+
+          <li><a href="#docs" class="mobile-drawer-link">Docs</a></li>
+        </ul>
+        <div class="mobile-drawer-actions">
+          <a href="#" class="btn btn-secondary" style="width: 100%; text-align: center;" id="btn-signin-drawer">Sign In</a>
+          <a href="#" class="btn btn-emerald" style="width: 100%; text-align: center;" id="btn-getstarted-drawer">Get Started</a>
+        </div>
+      </div>
+    </div>
+
+    <main>
+      <!-- 2. Hero Section -->
+      <section class="hero" id="hero">
+        <div class="container">
+          <div class="hero-content">
+            <a href="#ai-triage" class="hero-tag" id="hero-announcement" aria-label="Announcing MaintainIQ 2.0. Click to view AI Triage.">
+              <span class="new-badge">New</span>
+              <span>AI Triage Diagnostics now live</span>
+              <svg xmlns="http://www.w3.org/2000/svg" class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-left: 0.25rem;">
+                <path d="M5 12h14M12 5l7 7-7 7"></path>
+              </svg>
+            </a>
+            <h1>
+              <span class="gradient-text-full">AI-Powered</span>
+              <span>Maintenance Management</span>
+              <span style="font-size: 0.85em; font-weight: 500; color: var(--text-gray-400);">For Modern Organizations</span>
+            </h1>
+            <p class="hero-desc">
+              Scan. Report. Diagnose. Maintain. Register physical assets, generate unique QR codes, allow immediate issue reporting by scans, assign technicians instantly, and leverage AI to diagnose errors.
+            </p>
+            <div class="hero-actions">
+              <a href="#features" class="btn btn-primary" id="btn-hero-primary">
+                Get Started
+                <svg xmlns="http://www.w3.org/2000/svg" class="btn-icon btn-icon-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M5 12h14M12 5l7 7-7 7"></path>
+                </svg>
+              </a>
+              <a href="#showcase" class="btn btn-secondary" id="btn-hero-secondary">
+                <svg xmlns="http://www.w3.org/2000/svg" class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.25rem;">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <polygon points="10 8 16 12 10 16 10 8"></polygon>
+                </svg>
+                Watch Demo
+              </a>
+            </div>
+          </div>
+
+          <!-- Product Preview Mockup -->
+          <div class="hero-visual">
+            <div class="hero-preview" id="hero-preview-wrapper">
+              <!-- Main Asset Preview Card -->
+              <div class="asset-preview-card">
+                <div class="asset-header-row">
+                  <div class="asset-info">
+                    <h3>Classroom Projector 01</h3>
+                    <span>ID: AST-PRJ-001</span>
+                  </div>
+                  <span class="asset-badge">Operational</span>
+                </div>
+                
+                <div class="qr-section">
+                  <div class="qr-placeholder">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="1.5">
+                      <rect x="3" y="3" width="18" height="18" rx="2" fill="white"></rect>
+                      <!-- QR pattern simulations -->
+                      <rect x="5" y="5" width="5" height="5" fill="black"></rect>
+                      <rect x="14" y="5" width="5" height="5" fill="black"></rect>
+                      <rect x="5" y="14" width="5" height="5" fill="black"></rect>
+                      <rect x="7" y="7" width="1" height="1" fill="white"></rect>
+                      <rect x="16" y="7" width="1" height="1" fill="white"></rect>
+                      <rect x="7" y="16" width="1" height="1" fill="white"></rect>
+                      <rect x="11" y="11" width="2" height="2" fill="black"></rect>
+                      <rect x="14" y="11" width="1" height="2" fill="black"></rect>
+                      <rect x="11" y="14" width="2" height="1" fill="black"></rect>
+                      <rect x="16" y="14" width="2" height="2" fill="black"></rect>
+                    </svg>
+                    <div class="qr-pulse" aria-hidden="true"></div>
+                  </div>
+                  <div class="qr-details">
+                    <label>QR Access Link</label>
+                    <span>maintainiq.io/a/prj001</span>
+                    <span class="action-text">Scan to report issue</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Overlay Card 1: Timeline Preview -->
+              <div class="floating-overlay-card card-timeline-preview">
+                <div class="timeline-preview-item">
+                  <div class="timeline-preview-dot"></div>
+                  <div class="timeline-preview-info">
+                    <span>Issue Resolved</span>
+                    <label>HDMI Port replaced by Technician</label>
+                  </div>
+                </div>
+                <div class="timeline-preview-item">
+                  <div class="timeline-preview-dot purple"></div>
+                  <div class="timeline-preview-info">
+                    <span>Under Maintenance</span>
+                    <label>Assigned to Sarah K.</label>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Overlay Card 2: AI Diagnosis Preview -->
+              <div class="floating-overlay-card card-ai-preview">
+                <div class="ai-header-row">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path>
+                  </svg>
+                  <span>MaintainIQ AI Agent</span>
+                </div>
+                <div class="ai-preview-diagnosis">
+                  <h4>HDMI Link Failure</h4>
+                  <p>Probable Cause: Cable wear & tear or port solder crack. Suggested triage: HDMI hot plug reboot.</p>
+                </div>
+              </div>
+
+              <!-- Overlay Card 3: Micro Chart Preview -->
+              <div class="floating-overlay-card card-chart-preview">
+                <div class="chart-preview-header">
+                  <span>Downtime Reduction</span>
+                  <h4>-48%</h4>
+                </div>
+                <div class="chart-bars" aria-hidden="true">
+                  <div class="chart-bar" style="height: 60%"></div>
+                  <div class="chart-bar" style="height: 45%"></div>
+                  <div class="chart-bar" style="height: 75%"></div>
+                  <div class="chart-bar" style="height: 30%"></div>
+                  <div class="chart-bar active" style="height: 90%"></div>
+                  <div class="chart-bar" style="height: 50%"></div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. Trusted Organizations -->
+      <section class="logos-strip" aria-label="Trusted By">
+        <div class="container">
+          <h2 class="logos-strip-title">Trusted by facilities management globally</h2>
+          <div class="logos-grid">
+            <div class="logo-item">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10v6M12 4v16M4 8l8-4 8 4M4 16l8 4 8-4"></path></svg>
+              <span>Zenith Labs</span>
+            </div>
+            <div class="logo-item">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="9" y1="3" x2="9" y2="21"></line></svg>
+              <span>Apex Health</span>
+            </div>
+            <div class="logo-item">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path></svg>
+              <span>Vertex Univ</span>
+            </div>
+            <div class="logo-item">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+              <span>Prime Logistics</span>
+            </div>
+            <div class="logo-item">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>
+              <span>Nova Hotel</span>
+            </div>
+            <div class="logo-item">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+              <span>Nexus Office</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. Feature Grid -->
+      <section class="features-section" id="features">
+        <div class="container">
+          <div class="section-header">
+            <div class="section-tag emerald">Features</div>
+            <h2>Built for Speed. Scaled for Enterprise.</h2>
+            <p>Every tool your maintenance managers, technicians, and public reporters need to diagnose, organize, and fix facility-wide issues.</p>
+          </div>
+
+          <div class="features-grid">
+            <!-- Feature 1: AI Triage -->
+            <div class="premium-card feature-card ai-card">
+              <div class="feature-icon-wrapper" aria-hidden="true">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 24px; height: 24px;">
+                  <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path>
+                </svg>
+              </div>
+              <h3>AI Issue Triage</h3>
+              <p>Instantly categorize incoming reports, predict possible hardware causes, and outline safe initial diagnostic steps before dispatching a technician.</p>
+            </div>
+
+            <!-- Feature 2: QR Asset Management -->
+            <div class="premium-card feature-card">
+              <div class="feature-icon-wrapper" aria-hidden="true">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 24px; height: 24px;">
+                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><rect x="7" y="7" width="3" height="3"></rect><rect x="14" y="7" width="3" height="3"></rect><rect x="7" y="14" width="3" height="3"></rect>
+                </svg>
+              </div>
+              <h3>QR Asset Tracking</h3>
+              <p>Generate durable QR codes for machinery, appliances, or rooms. Scanning redirects users instantly to specific public reporting panels without logins.</p>
+            </div>
+
+            <!-- Feature 3: Maintenance Workflow -->
+            <div class="premium-card feature-card">
+              <div class="feature-icon-wrapper" aria-hidden="true">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 24px; height: 24px;">
+                  <path d="M18 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zM12 8v8M8 12h8"></path>
+                </svg>
+              </div>
+              <h3>Service Workflows</h3>
+              <p>Move assignments seamlessly from Reported to Under Inspection, Under Maintenance, and Resolved. Ensure technicians add notes and evidence before completion.</p>
+            </div>
+
+            <!-- Feature 4: Evidence Uploads -->
+            <div class="premium-card feature-card blue-card">
+              <div class="feature-icon-wrapper" aria-hidden="true">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 24px; height: 24px;">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"></path>
+                </svg>
+              </div>
+              <h3>Evidence Uploads</h3>
+              <p>Upload direct photo and video evidence of machine faults and resolved works. Build a visual accountability history for auditing and compliance.</p>
+            </div>
+
+            <!-- Feature 5: Asset History -->
+            <div class="premium-card feature-card">
+              <div class="feature-icon-wrapper" aria-hidden="true">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 24px; height: 24px;">
+                  <circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+              </div>
+              <h3>Immutable Asset History</h3>
+              <p>Keep a permanent service log for every machine. View historic issues, parts replaced, downtime intervals, and total costs accumulated over time.</p>
+            </div>
+
+            <!-- Feature 6: Role Management -->
+            <div class="premium-card feature-card">
+              <div class="feature-icon-wrapper" aria-hidden="true">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 24px; height: 24px;">
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 7a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"></path>
+                </svg>
+              </div>
+              <h3>Granular Roles</h3>
+              <p>Designate specific dashboards for Administrators, Supervisors, and Technicians. Guarantee private details and administrative actions are fully protected.</p>
+            </div>
+
+            <!-- Feature 7: Realtime Updates -->
+            <div class="premium-card feature-card blue-card">
+              <div class="feature-icon-wrapper" aria-hidden="true">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 24px; height: 24px;">
+                  <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path>
+                </svg>
+              </div>
+              <h3>Real-Time Notifications</h3>
+              <p>Alert managers on new issues and notify technicians on assignments immediately. Support real-time screen updates using push technology.</p>
+            </div>
+
+            <!-- Feature 8: Analytics Dashboard -->
+            <div class="premium-card feature-card">
+              <div class="feature-icon-wrapper" aria-hidden="true">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 24px; height: 24px;">
+                  <path d="M18 20V10M12 20V4M6 20v-6"></path>
+                </svg>
+              </div>
+              <h3>Analytics Dashboard</h3>
+              <p>Monitor critical key performance indicators including resolution speed, average downtime, recurring asset failures, and monthly repair spend.</p>
+            </div>
+
+            <!-- Feature 9: Search & Filters -->
+            <div class="premium-card feature-card">
+              <div class="feature-icon-wrapper" aria-hidden="true">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 24px; height: 24px;">
+                  <circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+              </div>
+              <h3>Advanced Queries</h3>
+              <p>Quickly query assets and repair records. Filter results by specific statuses, severity levels, facilities, technicians, or dates.</p>
+            </div>
+
+            <!-- Feature 10: Responsive Design -->
+            <div class="premium-card feature-card blue-card">
+              <div class="feature-icon-wrapper" aria-hidden="true">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 24px; height: 24px;">
+                  <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line>
+                </svg>
+              </div>
+              <h3>Mobile Friendly</h3>
+              <p>Optimized public issue filing interfaces and administrator dashboards. Update status logs and register equipment directly from the factory floor.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 5. AI Section -->
+      <section class="ai-section" id="ai-triage">
+        <div class="container">
+          <div class="ai-container">
+            <!-- Left Side: Conceptual visualization -->
+            <div class="ai-visualization">
+              <div class="ai-neural-grid" aria-hidden="true">
+                <div class="neural-node">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="3" width="18" height="18" rx="2" fill="none"></rect>
+                    <path d="M7 7h3v3H7zM14 7h3v3h-3zM7 14h3v3H7z"></path>
+                  </svg>
+                  <span>Asset Metadata</span>
+                </div>
+                <div class="neural-node">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle><path d="M12 8v4l3 3"></path>
+                  </svg>
+                  <span>Repair logs</span>
+                </div>
+                <div class="neural-node">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                  </svg>
+                  <span>Safety rules</span>
+                </div>
+                
+                <div class="neural-node center-node">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path>
+                  </svg>
+                  <span style="color: var(--text-white); font-weight: 600;">Core LLM</span>
+                </div>
+                
+                <div class="neural-node" style="grid-column: 3; grid-row: 2;">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline>
+                  </svg>
+                  <span>Diagnostics</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right Side: Interaction Simulation -->
+            <div class="ai-interactive-panel">
+              <div class="section-tag blue">GenAI Engine</div>
+              <h3>Convert human complaints into structural actions.</h3>
+              <p>MaintainIQ reads description briefs and queries historic logs to isolate problems, evaluate safety concerns, and suggest diagnostic actions.</p>
+              
+              <div class="simulation-window">
+                <div class="sim-header">
+                  <div class="sim-dots">
+                    <div class="sim-dot red"></div>
+                    <div class="sim-dot yellow"></div>
+                    <div class="sim-dot green"></div>
+                  </div>
+                  <div class="sim-title">triage_agent.py</div>
+                  <div style="width: 30px;"></div>
+                </div>
+                <div class="sim-body">
+                  <!-- Complaint typing simulation box -->
+                  <div class="complaint-input-box">
+                    <label>Reported Complaint</label>
+                    <p id="typed-complaint"><span class="cursor" id="typing-cursor"></span></p>
+                  </div>
+                  
+                  <!-- AI suggested diagnostics results -->
+                  <div class="triage-output-panel" id="triage-output">
+                    <div class="triage-header-row">
+                      <h4>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                          <polyline points="2 17 12 22 22 17"></polyline>
+                          <polyline points="2 12 12 17 22 12"></polyline>
+                        </svg>
+                        AI Structured Diagnosis
+                      </h4>
+                      <span class="badge badge-purple" id="triage-priority">High Priority</span>
+                    </div>
+                    
+                    <div class="triage-details-grid">
+                      <div class="triage-detail-item">
+                        <label>Suggested Title</label>
+                        <span id="triage-title">HDMI Link Failure & Screen Flicker</span>
+                      </div>
+                      <div class="triage-detail-item">
+                        <label>Asset Category</label>
+                        <span id="triage-category">AV Equipment / Display</span>
+                      </div>
+                    </div>
+                    
+                    <div class="triage-bullets">
+                      <label>Probable Root Causes</label>
+                      <ul id="triage-causes">
+                        <li>Defective or loose HDMI cable connections.</li>
+                        <li>Solder-joint fatigue on the projector internal port.</li>
+                      </ul>
+                    </div>
+
+                    <div class="triage-bullets" style="border-top: 1px solid rgba(139, 92, 246, 0.1); padding-top: 0.75rem;">
+                      <label>Initial Diagnostic Steps</label>
+                      <ul id="triage-checks">
+                        <li>Disconnect HDMI, inspect pin arrays, and reconnect.</li>
+                        <li>Test source transmission using alternative screen ports.</li>
+                      </ul>
+                    </div>
+                  </div>
+                  
+                  <button class="btn btn-emerald btn-trigger-ai" id="btn-run-simulation">Run AI Analysis</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 6. Product Workflow -->
+      <section class="workflow-section" id="workflow">
+        <div class="container">
+          <div class="section-header">
+            <div class="section-tag emerald">Workflow</div>
+            <h2>Eight Stages. Unified Resolution.</h2>
+            <p>From registering your equipment to logging its final history, MaintainIQ provides a smooth connected workflow for repair logs.</p>
+          </div>
+
+          <div class="workflow-timeline-wrapper">
+            <div class="workflow-timeline-line" aria-hidden="true"></div>
+            <div class="workflow-timeline-progress" id="workflow-progress" aria-hidden="true"></div>
+            
+            <div class="workflow-grid">
+              <!-- Step 1 -->
+              <div class="workflow-step active" data-step="1">
+                <div class="workflow-node-icon">1</div>
+                <h4>Register Asset</h4>
+                <p>Register machine parameters.</p>
+              </div>
+              <!-- Step 2 -->
+              <div class="workflow-step" data-step="2">
+                <div class="workflow-node-icon">2</div>
+                <h4>Generate QR</h4>
+                <p>Generate asset codes.</p>
+              </div>
+              <!-- Step 3 -->
+              <div class="workflow-step" data-step="3">
+                <div class="workflow-node-icon">3</div>
+                <h4>Scan QR</h4>
+                <p>Scan label directly.</p>
+              </div>
+              <!-- Step 4 -->
+              <div class="workflow-step" data-step="4">
+                <div class="workflow-node-icon">4</div>
+                <h4>Report Issue</h4>
+                <p>Submit description.</p>
+              </div>
+              <!-- Step 5 -->
+              <div class="workflow-step" data-step="5">
+                <div class="workflow-node-icon">5</div>
+                <h4>AI Analysis</h4>
+                <p>Triage and prioritize.</p>
+              </div>
+              <!-- Step 6 -->
+              <div class="workflow-step" data-step="6">
+                <div class="workflow-node-icon">6</div>
+                <h4>Assign Tech</h4>
+                <p>Dispatch technicians.</p>
+              </div>
+              <!-- Step 7 -->
+              <div class="workflow-step" data-step="7">
+                <div class="workflow-node-icon">7</div>
+                <h4>Repair</h4>
+                <p>Fix and record cost.</p>
+              </div>
+              <!-- Step 8 -->
+              <div class="workflow-step" data-step="8">
+                <div class="workflow-node-icon">8</div>
+                <h4>Asset History</h4>
+                <p>Log audit history.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 7. Dashboard Showcase -->
+      <section class="dashboard-showcase" id="showcase">
+        <div class="container">
+          <div class="section-header">
+            <div class="section-tag blue">Platform Demo</div>
+            <h2>Designed for Operations Teams</h2>
+            <p>A central control room for administrators to oversee facilities, schedule repairs, review analytical trends, and verify histories.</p>
+          </div>
+
+          <div class="browser-mockup">
+            <div class="browser-header">
+              <div class="browser-controls">
+                <div class="sim-dots">
+                  <div class="sim-dot red"></div>
+                  <div class="sim-dot yellow"></div>
+                  <div class="sim-dot green"></div>
+                </div>
+                <div class="browser-tabs">
+                  <button class="browser-tab active" id="tab-btn-assets" data-target="mockup-tab-assets">Assets</button>
+                  <button class="browser-tab" id="tab-btn-issues" data-target="mockup-tab-issues">Active Issues</button>
+                  <button class="browser-tab" id="tab-btn-analytics" data-target="mockup-tab-analytics">Analytics</button>
+                </div>
+              </div>
+              <div class="browser-address">app.maintainiq.io/dashboard</div>
+              <div style="width: 40px;"></div>
+            </div>
+            
+            <div class="browser-body">
+              <!-- Sidebar mockup -->
+              <aside class="mockup-sidebar">
+                <div class="mockup-logo">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 16px; height: 16px; color: var(--accent-emerald);">
+                    <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                  </svg>
+                  MaintainIQ
+                </div>
+                <ul class="mockup-nav">
+                  <li>
+                    <a href="#" class="mockup-nav-link active" id="mock-nav-dashboard">
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9" rx="1"></rect><rect x="14" y="3" width="7" height="5" rx="1"></rect><rect x="14" y="12" width="7" height="9" rx="1"></rect><rect x="3" y="16" width="7" height="5" rx="1"></rect></svg>
+                      Dashboard
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#" class="mockup-nav-link" id="mock-nav-assets">
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>
+                      Assets List
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#" class="mockup-nav-link" id="mock-nav-tickets">
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1zM4 22v-7"></path></svg>
+                      Tickets
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#" class="mockup-nav-link" id="mock-nav-settings">
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                      Config
+                    </a>
+                  </li>
+                </ul>
+              </aside>
+
+              <!-- Main Mockup Tabs content area -->
+              <div class="mockup-content-wrapper">
+                
+                <!-- Tab 1: Assets Content -->
+                <div class="mockup-content active" id="mockup-tab-assets">
+                  <div class="mockup-heading-row">
+                    <h3>Registered Assets</h3>
+                    <span class="badge badge-emerald">5 Registered</span>
+                  </div>
+                  
+                  <div class="mockup-grid">
+                    <div class="assets-table">
+                      <div class="table-header">
+                        <span>Asset Details</span>
+                        <span>Location</span>
+                        <span>Condition</span>
+                        <span>Status</span>
+                      </div>
+                      
+                      <div class="table-row">
+                        <div class="asset-name-cell">
+                          <span>HVAC Compressor A</span>
+                          <label>AST-HVAC-092</label>
+                        </div>
+                        <span>Roof Area East</span>
+                        <span class="badge badge-emerald">Optimal</span>
+                        <span class="badge badge-emerald">Operational</span>
+                      </div>
+                      
+                      <div class="table-row">
+                        <div class="asset-name-cell">
+                          <span>Classroom Projector 01</span>
+                          <label>AST-PRJ-001</label>
+                        </div>
+                        <span>Room 402</span>
+                        <span class="badge badge-orange">Fair</span>
+                        <span class="badge badge-purple" style="border-color: rgba(139, 92, 246, 0.3);">Triage pending</span>
+                      </div>
+
+                      <div class="table-row">
+                        <div class="asset-name-cell">
+                          <span>Main Elevator</span>
+                          <label>AST-ELEV-004</label>
+                        </div>
+                        <span>Central Lobby</span>
+                        <span class="badge badge-red">Critical</span>
+                        <span class="badge badge-red">Out of Service</span>
+                      </div>
+                      
+                      <div class="table-row">
+                        <div class="asset-name-cell">
+                          <span>Lab Centrifuge B</span>
+                          <label>AST-CENT-018</label>
+                        </div>
+                        <span>Chemical Lab 2</span>
+                        <span class="badge badge-emerald">Optimal</span>
+                        <span class="badge badge-emerald">Operational</span>
+                      </div>
+                    </div>
+
+                    <div class="mockup-sidebar-widgets">
+                      <div class="mockup-widget">
+                        <h4>Recent Activity</h4>
+                        <div class="activity-list">
+                          <div class="activity-item">
+                            <div class="activity-dot red"></div>
+                            <div class="activity-text">
+                              <span>Main Elevator failed</span>
+                              <label>10 mins ago • Central Lobby</label>
+                            </div>
+                          </div>
+                          <div class="activity-item">
+                            <div class="activity-dot yellow"></div>
+                            <div class="activity-text">
+                              <span>HVAC inspection logged</span>
+                              <label>2 hrs ago • Sarah K.</label>
+                            </div>
+                          </div>
+                          <div class="activity-item">
+                            <div class="activity-dot"></div>
+                            <div class="activity-text">
+                              <span>New Asset Registered</span>
+                              <label>Yesterday • Admin</label>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Tab 2: Issues Content -->
+                <div class="mockup-content" id="mockup-tab-issues">
+                  <div class="mockup-heading-row">
+                    <h3>Active Maintenance Tickets</h3>
+                    <span class="badge badge-orange">2 Pending</span>
+                  </div>
+                  
+                  <div class="issues-list-view">
+                    <div class="issue-item-card">
+                      <div class="issue-main">
+                        <div class="issue-header">
+                          <h4>Elevator Cable Friction Warning</h4>
+                          <span class="badge badge-red">Critical</span>
+                        </div>
+                        <p class="issue-desc">Strong metallic noise heard from elevator shaft during descent. Speed governor sensor triggered vibration alerts.</p>
+                        <div class="issue-meta">
+                          <span>Asset: <strong>AST-ELEV-004</strong></span>
+                          <span>Assigned: <strong>Dave R. (Elevator Tech)</strong></span>
+                          <span>Reported: <strong>10m ago</strong></span>
+                        </div>
+                      </div>
+                      <div class="issue-action">
+                        <span class="badge badge-orange" style="padding: 0.5rem 1rem;">Under Maintenance</span>
+                      </div>
+                    </div>
+
+                    <div class="issue-item-card">
+                      <div class="issue-main">
+                        <div class="issue-header">
+                          <h4>Projector HDMI flickering</h4>
+                          <span class="badge badge-purple">AI Diagnosed</span>
+                        </div>
+                        <p class="issue-desc">Screen flickers randomly during presentations and reports "No Signal" on HDMI 1 source port.</p>
+                        <div class="issue-meta">
+                          <span>Asset: <strong>AST-PRJ-001</strong></span>
+                          <span>Assigned: <strong>Triage Phase</strong></span>
+                          <span>Reported: <strong>1h ago</strong></span>
+                        </div>
+                      </div>
+                      <div class="issue-action">
+                        <span class="badge badge-purple" style="padding: 0.5rem 1rem; border-color: rgba(139, 92, 246, 0.3);">Triage Review</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Tab 3: Analytics Content -->
+                <div class="mockup-content" id="mockup-tab-analytics">
+                  <div class="mockup-heading-row">
+                    <h3>Performance Analytics</h3>
+                    <span class="badge badge-blue">Realtime Sync</span>
+                  </div>
+                  
+                  <div class="analytics-grid">
+                    <div class="analytics-card">
+                      <label>Mean Time to Repair (MTTR)</label>
+                      <h3>1.8 Hrs</h3>
+                    </div>
+                    <div class="analytics-card">
+                      <label>Asset Uptime Ratio</label>
+                      <h3>99.2%</h3>
+                    </div>
+                    <div class="analytics-card">
+                      <label>Monthly Cost Saved</label>
+                      <h3>$4,250</h3>
+                    </div>
+                  </div>
+                  
+                  <div class="analytics-chart-mockup">
+                    <div class="chart-column">
+                      <div class="chart-column-bar" style="height: 40px;"></div>
+                      <span class="chart-column-label">Mon</span>
+                    </div>
+                    <div class="chart-column">
+                      <div class="chart-column-bar" style="height: 70px;"></div>
+                      <span class="chart-column-label">Tue</span>
+                    </div>
+                    <div class="chart-column">
+                      <div class="chart-column-bar" style="height: 120px;"></div>
+                      <span class="chart-column-label">Wed</span>
+                    </div>
+                    <div class="chart-column">
+                      <div class="chart-column-bar" style="height: 90px;"></div>
+                      <span class="chart-column-label">Thu</span>
+                    </div>
+                    <div class="chart-column">
+                      <div class="chart-column-bar" style="height: 150px;"></div>
+                      <span class="chart-column-label">Fri</span>
+                    </div>
+                    <div class="chart-column">
+                      <div class="chart-column-bar" style="height: 60px;"></div>
+                      <span class="chart-column-label">Sat</span>
+                    </div>
+                    <div class="chart-column">
+                      <div class="chart-column-bar" style="height: 50px;"></div>
+                      <span class="chart-column-label">Sun</span>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 8. Statistics Section -->
+      <section class="stats-section" id="stats">
+        <div class="container">
+          <div class="stats-grid">
+            <div class="stat-item">
+              <span class="stat-number gradient-1" id="stat-assets">0</span>
+              <span class="stat-label">Assets Managed</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-number gradient-2" id="stat-resolution">0%</span>
+              <span class="stat-label">Issue Resolution</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-number gradient-3" id="stat-maintenance">0%</span>
+              <span class="stat-label">Faster Maintenance</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-number gradient-4" id="stat-monitoring">24/7</span>
+              <span class="stat-label">AI Monitoring</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 9. Why MaintainIQ -->
+      <section class="why-section" id="why-us">
+        <div class="container">
+          <div class="why-container">
+            <!-- Left Side: Split comparison mockup -->
+            <div class="why-visual">
+              <div class="comparison-split">
+                <!-- Negative Column -->
+                <div class="comparison-column">
+                  <div class="comparison-title">Messy Spreadsheets</div>
+                  <div class="comparison-card-item negative-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line>
+                    </svg>
+                    <div class="comparison-card-text">
+                      <span>Lost report logs</span>
+                      <label>Issues reported verbally on phone calls are forgotten.</label>
+                    </div>
+                  </div>
+                  <div class="comparison-card-item negative-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line>
+                    </svg>
+                    <div class="comparison-card-text">
+                      <span>No historical audits</span>
+                      <label>Failed to track how many times this AC leaked in 6 months.</label>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Positive Column -->
+                <div class="comparison-column positive">
+                  <div class="comparison-title">With MaintainIQ</div>
+                  <div class="comparison-card-item positive-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline>
+                    </svg>
+                    <div class="comparison-card-text">
+                      <span>Zero-friction QR filing</span>
+                      <label>Scanned, submitted, and dispatched in 45 seconds flat.</label>
+                    </div>
+                  </div>
+                  <div class="comparison-card-item positive-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline>
+                    </svg>
+                    <div class="comparison-card-text">
+                      <span>Permanent ledger</span>
+                      <label>Chronological timeline logs for audits and asset lifespan values.</label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right Side: Benefits list -->
+            <div class="why-benefits">
+              <div class="section-tag emerald">Why Us</div>
+              <h2 style="font-size: 2.5rem; line-height: 1.2;">Smarter operations. Zero downtime.</h2>
+              <p>Shift your company's maintenance approach from reactive fire-fighting to predictive efficiency.</p>
+              
+              <div class="benefit-item">
+                <div class="benefit-icon-wrapper" aria-hidden="true">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                </div>
+                <div class="benefit-text">
+                  <h4>Smart AI diagnostics</h4>
+                  <p>Technicians know exactly what parts to load onto the service truck before leaving HQ.</p>
+                </div>
+              </div>
+
+              <div class="benefit-item">
+                <div class="benefit-icon-wrapper" aria-hidden="true">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><rect x="7" y="7" width="3" height="3"></rect><rect x="14" y="7" width="3" height="3"></rect><rect x="7" y="14" width="3" height="3"></rect></svg>
+                </div>
+                <div class="benefit-text">
+                  <h4>Easy QR reporting</h4>
+                  <p>No training or accounts needed for reporters. Anyone in the facility can report fault lines.</p>
+                </div>
+              </div>
+
+              <div class="benefit-item">
+                <div class="benefit-icon-wrapper" aria-hidden="true">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 22 22 22 12 2"></polygon></svg>
+                </div>
+                <div class="benefit-text">
+                  <h4>Reduce downtime by 48%</h4>
+                  <p>Address warning signals and minor flaws before critical machinery breakdowns shut down operations.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 10. Testimonials -->
+      <section class="testimonials-section" id="testimonials">
+        <div class="container">
+          <div class="section-header">
+            <div class="section-tag purple">Testimonials</div>
+            <h2>Loved by facility teams</h2>
+            <p>Read how operational supervisors and technical teams around the globe optimize workflows with MaintainIQ.</p>
+          </div>
+
+          <div class="testimonials-grid">
+            <!-- Testimonial 1 -->
+            <div class="premium-card testimonial-card">
+              <div class="testimonial-stars" aria-label="5 stars rating">
+                <!-- Star SVGs -->
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+              </div>
+              <p class="testimonial-text">
+                "Adding QR codes to our hospital's complex laboratory devices completely changed our repair cycle. Staff scan code labels, report failures instantly, and AI triages severity within seconds."
+              </p>
+              <div class="testimonial-author">
+                <div class="testimonial-avatar" style="background: linear-gradient(135deg, #a78bfa 0%, #3b82f6 100%);"></div>
+                <div class="testimonial-author-info">
+                  <h4>Dr. Marcus Vance</h4>
+                  <span>Director of Operations • Apex Health Group</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Testimonial 2 -->
+            <div class="premium-card testimonial-card">
+              <div class="testimonial-stars" aria-label="5 stars rating">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+              </div>
+              <p class="testimonial-text">
+                "Technicians now arrive at locations fully prepared with the necessary backup equipment. The AI root-cause diagnostics reports are incredibly precise and save our logistics crew hours."
+              </p>
+              <div class="testimonial-author">
+                <div class="testimonial-avatar" style="background: linear-gradient(135deg, #34d399 0%, #3b82f6 100%);"></div>
+                <div class="testimonial-author-info">
+                  <h4>Sarah Jenkins</h4>
+                  <span>Maintenance Supervisor • Vertex Logistics</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Testimonial 3 -->
+            <div class="premium-card testimonial-card">
+              <div class="testimonial-stars" aria-label="5 stars rating">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+              </div>
+              <p class="testimonial-text">
+                "Auditors love the immutable history logs. Showing a complete digital footprint of safety tests, resolutions, and parts replaced in a single click makes compliance reviews frictionless."
+              </p>
+              <div class="testimonial-author">
+                <div class="testimonial-avatar" style="background: linear-gradient(135deg, #fb923c 0%, #ef4444 100%);"></div>
+                <div class="testimonial-author-info">
+                  <h4>James Sterling</h4>
+                  <span>Director of Facilities • Grand Plaza Hotels</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+
+
+      <!-- 12. Final CTA -->
+      <section class="cta-section" id="final-cta">
+        <div class="container">
+          <div class="cta-box">
+            <h2>Modernize your maintenance operations today</h2>
+            <p>Eliminate paper trails and communication lag. Start tracking and fixing asset flaws with MaintainIQ.</p>
+            <div class="cta-actions">
+              <a href="#features" class="btn btn-primary" id="btn-cta-startfree">Get Started</a>
+              <a href="#" class="btn btn-secondary" id="btn-cta-bookdemo">Book a Demo</a>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- 13. Footer -->
+    <footer class="footer" id="docs">
+      <div class="container">
+        <div class="footer-grid">
+          <div class="footer-info">
+            <a href="#" class="logo" id="footer-logo" aria-label="MaintainIQ Homepage">
+              <div class="logo-icon" aria-hidden="true">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 18px; height: 18px;">
+                  <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                </svg>
+              </div>
+              MaintainIQ
+            </a>
+            <p>Premium, AI-powered QR Maintenance & Asset History Platform. Scan. Report. Diagnose. Maintain.</p>
+            <div class="footer-socials">
+              <a href="#" class="footer-social-link" aria-label="Twitter Page">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg>
+              </a>
+              <a href="#" class="footer-social-link" aria-label="GitHub Repository">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
+              </a>
+              <a href="#" class="footer-social-link" aria-label="LinkedIn Profile">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"></path><circle cx="4" cy="4" r="2"></circle></svg>
+              </a>
+            </div>
+          </div>
+          
+          <div class="footer-column">
+            <h4>Features</h4>
+            <ul class="footer-links">
+              <li><a href="#features" id="foot-features-1">QR Asset Scanning</a></li>
+              <li><a href="#ai-triage" id="foot-features-2">AI Triage Diagnostics</a></li>
+              <li><a href="#workflow" id="foot-features-3">Maintenance Pipelines</a></li>
+              <li><a href="#showcase" id="foot-features-4">Admin Dashboard</a></li>
+            </ul>
+          </div>
+
+          <div class="footer-column">
+            <h4>Solutions</h4>
+            <ul class="footer-links">
+              <li><a href="#" id="foot-solutions-1">Hospitals & Clinics</a></li>
+              <li><a href="#" id="foot-solutions-2">Schools & Universities</a></li>
+              <li><a href="#" id="foot-solutions-3">Factories & Warehouses</a></li>
+              <li><a href="#" id="foot-solutions-4">Hotels & Office Parks</a></li>
+            </ul>
+          </div>
+
+          <div class="footer-column">
+            <h4>Resources</h4>
+            <ul class="footer-links">
+              <li><a href="#" id="foot-resources-1">Documentation</a></li>
+              <li><a href="#" id="foot-resources-2">System Status</a></li>
+              <li><a href="#" id="foot-resources-3">Developer API</a></li>
+              <li><a href="#" id="foot-resources-4">Contact Support</a></li>
+            </ul>
+          </div>
+
+          <div class="footer-column">
+            <h4>Company</h4>
+            <ul class="footer-links">
+              <li><a href="#" id="foot-company-1">About Us</a></li>
+              <li><a href="#" id="foot-company-2">Careers</a></li>
+              <li><a href="#" id="foot-company-3">Security Practices</a></li>
+              <li><a href="#" id="foot-company-4">Privacy & Terms</a></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="footer-bottom">
+          <span>&copy; 2026 MaintainIQ Inc. All rights reserved.</span>
+          <span>Designed for premium operations management.</span>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script type="module" src="./js/index.js"></script>
   </body>
 </html>
