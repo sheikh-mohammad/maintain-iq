@@ -53,6 +53,12 @@
               </a>
             </li>
             <li>
+              <a href="#" class="sidebar-link" data-page="maintenance">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
+                <span>Maintenance Records</span>
+              </a>
+            </li>
+            <li>
               <a href="#" class="sidebar-link" data-page="history">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
                 <span>History</span>
@@ -271,6 +277,39 @@
             </div>
             <div style="margin-top: 1rem; text-align: center;">
               <button class="btn btn-emerald" id="btn-create-technician">+ Add Technician</button>
+            </div>
+          </section>
+
+          <!-- ==================== MAINTENANCE RECORDS ==================== -->
+          <section class="admin-page" id="page-maintenance">
+            <div class="admin-page-header">
+              <h3>Maintenance Records</h3>
+              <p>Track all completed and ongoing maintenance work. Each record logs the technician, work performed, cost, and resolution details.</p>
+            </div>
+            <div class="admin-table-card">
+              <div class="admin-table-toolbar">
+                <input type="text" class="admin-search-input" placeholder="Search records..." id="maintenance-search" />
+              </div>
+              <div class="admin-table-wrapper">
+                <table class="admin-table">
+                  <thead>
+                    <tr>
+                      <th>Issue</th>
+                      <th>Asset</th>
+                      <th>Technician</th>
+                      <th>Date Completed</th>
+                      <th>Cost</th>
+                      <th>Status</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="maintenance-table-body">
+                    <tr>
+                      <td colspan="7" class="table-empty">No maintenance records yet. Records will appear once issues are resolved.</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
             </div>
           </section>
 
