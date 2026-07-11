@@ -69,10 +69,6 @@ export async function redirectAfterAuth(user) {
 
 /* ── Sign out (Supabase docs pattern) ──────────────────────────────────── */
 
-/**
- * Clears ALL Supabase-related items from localStorage.
- * Supabase stores the session under keys prefixed with "sb-".
- */
 function clearSupabaseStorage() {
   const toRemove = []
   for (let i = 0; i < localStorage.length; i++) {
@@ -84,45 +80,26 @@ function clearSupabaseStorage() {
   toRemove.forEach(key => localStorage.removeItem(key))
 }
 
-/**
- * Sign out the current user following the Supabase docs pattern:
- *   const { error } = await supabase.auth.signOut()
- *
- * 1. Clear all Supabase session data from localStorage first
- * 2. Call supabase.auth.signOut() to revoke the session server-side
- * 3. Clear the custom user cache
- * 4. Redirect to home
- *
- * Using try/catch so the user is always logged out locally even if the
- * network request to revoke the token fails.
- */
 export async function signOutUser() {
-  // 1. Nuke all Supabase localStorage keys first (sb- prefix)
   clearSupabaseStorage()
 
-  // 2. Call signOut per Supabase docs — revokes session on the server
   try {
     const { error } = await supabase.auth.signOut()
     if (error) {
       console.warn('Supabase signOut API error (session still cleared locally):', error.message)
     }
   } catch (err) {
-    // Network errors etc. — don't block logout, session is already cleared locally
     console.warn('Supabase signOut network error (session still cleared locally):', err)
   }
 
-  // 3. Remove our own caches
   localStorage.removeItem(USER_CACHE_KEY)
   localStorage.removeItem(TECH_SESSION_KEY)
-
-  // 4. Go home
   window.location.href = '/'
 }
 
 /* ── Auto-init on every page ─────────────────────────────────────────── */
 
 document.addEventListener('DOMContentLoaded', async () => {
-  // Check both Supabase auth session and manual tech session
   const { data: { session } } = await supabase.auth.getSession()
   const techSession = getTechSession()
 
@@ -131,7 +108,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     syncUserCache(session.user)
     user = session.user
   } else if (techSession) {
-    // Build a fake user object from tech session for navbar display
     user = {
       email: techSession.email,
       user_metadata: { full_name: techSession.name },
@@ -160,22 +136,14 @@ function syncUserCache(user) {
 
 export function getCachedUser() {
   try {
-    // 1. Check Supabase auth user
     const cached = JSON.parse(localStorage.getItem(USER_CACHE_KEY))
     if (cached) return cached
 
-    // 2. Check manual tech session
     const techSession = JSON.parse(localStorage.getItem(TECH_SESSION_KEY))
     if (techSession) {
-      return {
-        id: null,
-        email: techSession.email,
-        name: techSession.name,
-      }
+      return { id: null, email: techSession.email, name: techSession.name }
     }
-  } catch {
-    // ignore
-  }
+  } catch { /* ignore */ }
   return null
 }
 
@@ -187,7 +155,7 @@ export function getTechSession() {
   }
 }
 
-/* ── Main site navbar (landing page) ──────────────────────────────────── */
+/* ── Main site navbar ──────────────────────────────────────────────────── */
 
 function updateMainNavbar(user) {
   const navActions = document.querySelector('.nav-actions')
@@ -212,8 +180,6 @@ function updateMainNavbar(user) {
   }
 }
 
-/* ── Admin topbar ─────────────────────────────────────────────────────── */
-
 function updateAdminTopbar(user) {
   const topbarActions = document.querySelector('.topbar-actions')
   if (!topbarActions) return
@@ -228,8 +194,6 @@ function updateAdminTopbar(user) {
     topbarActions.appendChild(buildUserMenu(user, true))
   }
 }
-
-/* ── Public assets page nav-actions ───────────────────────────────────── */
 
 function updateAssetsPageBtn(user) {
   const container = document.querySelector('.nav-actions')
@@ -247,8 +211,6 @@ function updateAssetsPageBtn(user) {
     backBtn.style.display = ''
   }
 }
-
-/* ── Mobile drawer ────────────────────────────────────────────────────── */
 
 function updateMobileDrawer(user) {
   const drawerActions = document.querySelector('.mobile-drawer-actions')
@@ -316,7 +278,7 @@ function buildUserMenu(user, isCompact) {
       ${isAdmin(user)
         ? '<a href="/pages/private/admin/index.html" class="user-dropdown-item">Dashboard</a>'
         : ''}
-      <button class="user-dropdown-item logout-btn">Sign Out</button>
+      <button class="user-dropdown-item logout-btn" onclick="signOutUser()">Sign Out</button>
     </div>
   `
 
@@ -340,7 +302,6 @@ function buildUserMenu(user, isCompact) {
 
 /* ── Route protection ─────────────────────────────────────────────────── */
 
-/** Redirect to login if no session. */
 export async function protectRoute() {
   const { data: { session } } = await supabase.auth.getSession()
   if (!session) {
@@ -350,7 +311,6 @@ export async function protectRoute() {
   return true
 }
 
-/** Require both session AND admin@admin.com — otherwise redirect. */
 export async function requireAdmin() {
   const { data: { session } } = await supabase.auth.getSession()
   if (!session) {
