@@ -67,8 +67,11 @@ function initSidebarNavigation() {
 
       // Close sidebar on mobile
       const sidebar = document.getElementById('tech-sidebar')
+      const overlay = document.getElementById('tech-sidebar-overlay')
       if (window.innerWidth <= 768) {
         sidebar.classList.remove('open')
+        if (overlay) overlay.classList.remove('active')
+        document.body.style.overflow = ''
       }
     })
   })
@@ -80,30 +83,59 @@ function initSidebarToggle() {
   const toggleBtn = document.getElementById('tech-mobile-toggle')
   const collapseBtn = document.getElementById('tech-sidebar-collapse')
   const sidebar = document.getElementById('tech-sidebar')
+  const overlay = document.getElementById('tech-sidebar-overlay')
   if (!sidebar) return
+
+  function openSidebar() {
+    sidebar.classList.add('open')
+    if (overlay) overlay.classList.add('active')
+    document.body.style.overflow = 'hidden'
+  }
+
+  function closeSidebar() {
+    sidebar.classList.remove('open')
+    if (overlay) overlay.classList.remove('active')
+    document.body.style.overflow = ''
+  }
 
   // Mobile: show/hide sidebar
   if (toggleBtn) {
     toggleBtn.addEventListener('click', () => {
-      sidebar.classList.toggle('open')
+      if (sidebar.classList.contains('open')) {
+        closeSidebar()
+      } else {
+        openSidebar()
+      }
     })
   }
 
-  // Desktop: expand/collapse
+  // Desktop: expand/collapse; Mobile: close sidebar
   if (collapseBtn) {
     collapseBtn.addEventListener('click', () => {
-      sidebar.classList.toggle('collapsed')
-      if (window.innerWidth <= 768 && !sidebar.classList.contains('open')) {
-        sidebar.classList.add('open')
+      if (window.innerWidth <= 768) {
+        closeSidebar()
+      } else {
+        sidebar.classList.toggle('collapsed')
       }
     })
   }
 
-  document.addEventListener('click', e => {
-    if (window.innerWidth <= 768 && sidebar.classList.contains('open')) {
-      if (!sidebar.contains(e.target) && !toggleBtn?.contains(e.target)) {
-        sidebar.classList.remove('open')
-      }
+  // Overlay click closes sidebar
+  if (overlay) {
+    overlay.addEventListener('click', closeSidebar)
+  }
+
+  // ESC key closes sidebar on mobile
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && window.innerWidth <= 768 && sidebar.classList.contains('open')) {
+      closeSidebar()
+    }
+  })
+
+  // Cleanup on resize from mobile to desktop
+  window.addEventListener('resize', () => {
+    if (window.innerWidth > 768 && sidebar.classList.contains('open')) {
+      closeSidebar()
     }
   })
 }

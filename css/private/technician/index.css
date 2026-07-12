@@ -20,6 +20,7 @@
   top: 0;
   left: 0;
   height: 100vh;
+  height: 100dvh;
   z-index: 100;
   transition: width var(--transition-smooth), transform var(--transition-smooth);
   overflow: hidden;
@@ -451,6 +452,23 @@
 .tech-form-info svg {
   flex-shrink: 0;
   color: #60a5fa;
+}
+
+/* --- Mobile Sidebar Overlay --- */
+
+.tech-sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 99;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  transition: opacity var(--transition-smooth);
+}
+
+.tech-sidebar-overlay.active {
+  display: block;
 }
 
 /* ===== Responsive ===== */

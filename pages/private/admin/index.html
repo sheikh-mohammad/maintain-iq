@@ -94,6 +94,8 @@
 
       <!-- Main Content Area -->
       <div class="admin-main">
+        <!-- Mobile sidebar overlay -->
+        <div class="sidebar-overlay" id="sidebar-overlay"></div>
         <!-- Top Bar -->
         <header class="admin-topbar">
           <button class="mobile-sidebar-toggle" id="mobile-sidebar-toggle" aria-label="Toggle sidebar">
@@ -251,6 +253,9 @@
               <p>Add and manage maintenance technicians.</p>
             </div>
             <div class="admin-table-card">
+              <div class="admin-table-toolbar">
+                <input type="text" class="admin-search-input" placeholder="Search technicians..." id="tech-search" />
+              </div>
               <div class="admin-table-wrapper">
                 <table class="admin-table">
                   <thead>

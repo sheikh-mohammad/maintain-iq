@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   initSidebarToggle()
   initModals()
   initTableActions()
+  initSearch()
   initCreateTechnician()
   initCreateAsset()
   loadTechnicians()
@@ -44,7 +45,12 @@ function initSidebarNavigation() {
       }
 
       const sidebar = document.getElementById('admin-sidebar')
-      if (window.innerWidth <= 768) sidebar.classList.remove('open')
+      const overlay = document.getElementById('sidebar-overlay')
+      if (window.innerWidth <= 768) {
+        sidebar.classList.remove('open')
+        if (overlay) overlay.classList.remove('active')
+        document.body.style.overflow = ''
+      }
     })
   })
 }
@@ -54,30 +60,59 @@ function initSidebarToggle() {
   const toggleBtn = document.getElementById('mobile-sidebar-toggle')
   const collapseBtn = document.getElementById('sidebar-collapse')
   const sidebar = document.getElementById('admin-sidebar')
+  const overlay = document.getElementById('sidebar-overlay')
   if (!sidebar) return
+
+  function openSidebar() {
+    sidebar.classList.add('open')
+    if (overlay) overlay.classList.add('active')
+    document.body.style.overflow = 'hidden'
+  }
+
+  function closeSidebar() {
+    sidebar.classList.remove('open')
+    if (overlay) overlay.classList.remove('active')
+    document.body.style.overflow = ''
+  }
 
   // Mobile: show/hide sidebar
   if (toggleBtn) {
-    toggleBtn.addEventListener('click', () => sidebar.classList.toggle('open'))
-  }
-
-  // Desktop: expand/collapse
-  if (collapseBtn) {
-    collapseBtn.addEventListener('click', () => {
-      sidebar.classList.toggle('collapsed')
-      // On mobile, also show sidebar when expanding
-      if (window.innerWidth <= 768 && !sidebar.classList.contains('open')) {
-        sidebar.classList.add('open')
+    toggleBtn.addEventListener('click', () => {
+      if (sidebar.classList.contains('open')) {
+        closeSidebar()
+      } else {
+        openSidebar()
       }
     })
   }
 
-  // Click outside to close on mobile
-  document.addEventListener('click', e => {
-    if (window.innerWidth <= 768 && sidebar.classList.contains('open')) {
-      if (!sidebar.contains(e.target) && !toggleBtn?.contains(e.target)) {
-        sidebar.classList.remove('open')
+  // Desktop: expand/collapse; Mobile: close sidebar
+  if (collapseBtn) {
+    collapseBtn.addEventListener('click', () => {
+      if (window.innerWidth <= 768) {
+        closeSidebar()
+      } else {
+        sidebar.classList.toggle('collapsed')
       }
+    })
+  }
+
+  // Overlay click closes sidebar
+  if (overlay) {
+    overlay.addEventListener('click', closeSidebar)
+  }
+
+  // ESC key closes sidebar on mobile
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && window.innerWidth <= 768 && sidebar.classList.contains('open')) {
+      closeSidebar()
+    }
+  })
+
+  // Cleanup body overflow on resize from mobile to desktop
+  window.addEventListener('resize', () => {
+    if (window.innerWidth > 768 && sidebar.classList.contains('open')) {
+      closeSidebar()
     }
   })
 }
@@ -191,7 +226,7 @@ async function loadAssets() {
       </td>
       <td>
         ${canChangeStatus ? `
-        <select class="admin-status-select" data-code="${a.assetCode}" data-current="${a.status}">
+        <select class="admin-status-select" data-code="${a.assetCode}" data-name="${a.name}" data-current="${a.status}">
           <option value="">Change status...</option>
           <option value="Operational">Operational</option>
           <option value="Issue Reported">Issue Reported</option>
@@ -221,6 +256,7 @@ async function loadAssets() {
       if (!newStatus) return
 
       const assetCode = Number(select.dataset.code)
+      const assetName = select.dataset.name
       const oldStatus = select.dataset.current
 
       const { error } = await supabase
@@ -236,6 +272,7 @@ async function loadAssets() {
         // Log history
         createHistoryLog({
           asset_code: assetCode,
+          asset_name: assetName,
           action: 'Status Changed',
           actor: 'admin@admin.com',
           detail: `${oldStatus} → ${newStatus}`,
@@ -654,28 +691,58 @@ async function loadHistoryLog() {
   const timeline = document.getElementById('history-timeline')
   if (!timeline) return
 
-  // Fetch from history_log table
+  // Fetch history entries
   const { data: logEntries } = await supabase
     .from('history_log')
     .select('*')
     .order('created_at', { ascending: false })
     .limit(50)
 
+  // Fetch assets for name enrichment
+  const { data: assets } = await supabase
+    .from('assets')
+    .select('assetCode, name')
+
+  const assetMap = {}
+  if (assets) {
+    assets.forEach(a => { assetMap[a.assetCode] = a })
+  }
+
+  // Fetch issues for title enrichment
+  const { data: issues } = await supabase
+    .from('issues')
+    .select('id, title, assetId')
+
+  const issueMap = {}
+  if (issues) {
+    issues.forEach(i => { issueMap[i.id] = i })
+  }
+
   const events = []
 
   if (logEntries && logEntries.length > 0) {
-    events.push(...logEntries.map(e => ({
-      id: e.id,
-      date: e.created_at,
-      action: e.action,
-      actor: e.actor,
-      detail: e.detail,
-      extra: e.asset_name ? `${e.asset_name}${e.asset_code ? ` (${e.asset_code})` : ''}` : '',
-      type: e.action === 'Asset Created' ? 'create'
-        : e.action === 'Issue Reported' ? 'issue'
-        : e.action === 'Issue Resolved' ? 'resolve'
-        : 'update',
-    })))
+    logEntries.forEach(e => {
+      // Resolve asset info: directly or via issue lookup
+      const issue = e.issue_id ? issueMap[e.issue_id] : null
+      const resolvedAssetCode = e.asset_code || (issue ? issue.assetId : null)
+      const asset = resolvedAssetCode ? assetMap[resolvedAssetCode] : null
+      const assetName = e.asset_name || (asset ? asset.name : null)
+
+      events.push({
+        id: e.id,
+        date: e.created_at,
+        action: e.action,
+        actor: e.actor,
+        detail: e.detail,
+        assetName,
+        assetCode: resolvedAssetCode,
+        issueTitle: issue?.title || null,
+        type: e.action === 'Asset Created' ? 'create'
+          : e.action === 'Issue Reported' ? 'issue'
+          : e.action === 'Issue Resolved' ? 'resolve'
+          : 'update',
+      })
+    })
   }
 
   // Also pull from maintenance_records as fallback
@@ -686,12 +753,12 @@ async function loadHistoryLog() {
     .limit(50)
 
   if (records && records.length > 0) {
-    // Only add maintenance records that don't already have a matching history entry
     const historyIssueIds = new Set(
       events.filter(e => e.action.includes('Maintenance') || e.action === 'Issue Resolved').map(e => e.id)
     )
 
     records.forEach(r => {
+      const asset = r.asset_id ? assetMap[r.asset_id] : null
       events.push({
         id: `mr-${r.id}`,
         date: r.created_at,
@@ -700,7 +767,9 @@ async function loadHistoryLog() {
         detail: r.status === 'Completed'
           ? `Resolved — Cost: $${r.cost}`
           : `${r.status} — ${(r.actions_taken || '').substring(0, 80)}`,
-        extra: `Asset: ${r.asset_id}`,
+        assetName: asset?.name || null,
+        assetCode: r.asset_id,
+        issueTitle: null,
         type: r.status === 'Completed' ? 'resolve' : 'update',
       })
     })
@@ -731,25 +800,105 @@ async function loadHistoryLog() {
     return true
   })
 
+  function esc(str) {
+    const d = document.createElement('div')
+    d.textContent = str
+    return d.innerHTML
+  }
+
   timeline.innerHTML = unique.map(e => {
     const dotClass = e.type === 'create' ? 'dot-create'
       : e.type === 'issue' ? 'dot-issue'
       : e.type === 'resolve' ? 'dot-resolve'
       : 'dot-update'
 
-    return `
-      <div class="history-entry" style="display:block;">
-        <div class="history-entry-dot ${dotClass}"></div>
-        <div class="history-entry-content">
-          <div class="history-entry-header">
-            <span class="history-entry-action">${e.action}</span>
-            <span class="history-entry-date">${new Date(e.date).toLocaleString()}</span>
-          </div>
-          <div class="history-entry-details">${e.detail}</div>
-          <div class="history-entry-actor">by <strong>${e.actor}</strong>${e.extra ? ` — ${e.extra}` : ''}</div>
-        </div>
-      </div>`
+    // Format detail — highlight old → new transitions
+    let detailHtml = esc(e.detail || '')
+    const arrow = '→'
+    if (detailHtml.includes(arrow)) {
+      const parts = detailHtml.split(arrow)
+      if (parts.length === 2) {
+        detailHtml = '<span class="history-change-old">' + parts[0].trim() + '</span><span class="history-change-arrow"> ' + arrow + ' </span><span class="history-change-new">' + parts[1].trim() + '</span>'
+      }
+    }
+
+    const assetDisplay = e.assetName
+      ? '<div class="history-entry-asset"><span class="history-asset-tag">' + esc(e.assetName) + (e.assetCode ? ' <span class="history-asset-code">#' + e.assetCode + '</span>' : '') + '</span></div>'
+      : ''
+
+    const issueDisplay = e.issueTitle
+      ? '<div class="history-entry-issue-ref">Issue: <strong>' + esc(e.issueTitle) + '</strong></div>'
+      : ''
+
+    return '<div class="history-entry" style="display:block;">' +
+      '<div class="history-entry-dot ' + dotClass + '"></div>' +
+      '<div class="history-entry-content">' +
+        '<div class="history-entry-header">' +
+          '<span class="history-entry-action">' + esc(e.action) + '</span>' +
+          '<span class="history-entry-date">' + new Date(e.date).toLocaleString() + '</span>' +
+        '</div>' +
+        assetDisplay +
+        '<div class="history-entry-details">' + detailHtml + '</div>' +
+        issueDisplay +
+        '<div class="history-entry-actor">by <strong>' + esc(e.actor) + '</strong></div>' +
+      '</div></div>'
   }).join('')
+}
+
+
+/* --- Table Search / Filter --- */
+
+function initSearch() {
+  const searches = [
+    { input: 'asset-search', tbody: 'assets-table-body', colspan: 7 },
+    { input: 'issue-search', tbody: 'issues-table-body', colspan: 6 },
+    { input: 'tech-search', tbody: 'technicians-table-body', colspan: 5 },
+    { input: 'maintenance-search', tbody: 'maintenance-table-body', colspan: 7 },
+  ]
+
+  searches.forEach(({ input: inputId, tbody: tbodyId, colspan }) => {
+    const input = document.getElementById(inputId)
+    const tbody = document.getElementById(tbodyId)
+    if (!input || !tbody) return
+
+    input.addEventListener('input', () => {
+      const term = input.value.trim().toLowerCase()
+      const rows = Array.from(tbody.querySelectorAll('tr'))
+
+      // Remove any previous "no results" row
+      const prevEmpty = tbody.querySelector('tr.empty-search-result')
+      if (prevEmpty) prevEmpty.remove()
+
+      if (!term) {
+        rows.forEach(row => { row.style.display = '' })
+        return
+      }
+
+      let visibleCount = 0
+
+      rows.forEach(row => {
+        // Skip the default empty-state row (has colspan)
+        if (row.querySelector('td[colspan]')) {
+          row.style.display = 'none'
+          return
+        }
+        const text = row.textContent.toLowerCase()
+        if (text.includes(term)) {
+          row.style.display = ''
+          visibleCount++
+        } else {
+          row.style.display = 'none'
+        }
+      })
+
+      if (visibleCount === 0) {
+        const emptyRow = document.createElement('tr')
+        emptyRow.className = 'empty-search-result'
+        emptyRow.innerHTML = '<td colspan="' + colspan + '" class="table-empty">No results found for "<strong>' + input.value + '</strong>".</td>'
+        tbody.appendChild(emptyRow)
+      }
+    })
+  })
 }
 
 /* =====================================================================
