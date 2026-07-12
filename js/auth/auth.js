@@ -4,10 +4,13 @@
    Load this on EVERY page — it auto-inits and updates the navbar.
    ========================================================================== */
 
-import { PROJECT_URL, PUBLISH_KEY, ADMIN_EMAIL } from '../config/config.js'
+const PROJECT_URL = 'https://tfetiwjaumsssitpnhqr.supabase.co'
+const PUBLISH_KEY = 'sb_publishable_hHKkHg_xRX7HCvGZgWqxQA_Pu-m0CWZ'
+const ADMIN_EMAIL = 'admin@admin.com'
 
 const { createClient } = window.supabase
 export const supabase = createClient(PROJECT_URL, PUBLISH_KEY)
+export { ADMIN_EMAIL }
 
 const USER_CACHE_KEY = 'maintainiq-user'
 const TECH_SESSION_KEY = 'maintainiq-tech-session'

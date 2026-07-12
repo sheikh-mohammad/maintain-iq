@@ -2,8 +2,7 @@
    MaintainIQ - Admin Dashboard Script
    ========================================================================== */
 
-import { requireAdmin, supabase, showToast, createHistoryLog, getTechSession } from '../../auth/auth.js'
-import { ADMIN_EMAIL } from '../../config/config.js'
+import { requireAdmin, supabase, showToast, createHistoryLog, getTechSession, ADMIN_EMAIL } from '../../auth/auth.js'
 
 document.addEventListener('DOMContentLoaded', async () => {
   const ok = await requireAdmin()

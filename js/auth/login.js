@@ -2,8 +2,7 @@
    MaintainIQ - Login Page Handler
    ========================================================================== */
 
-import { supabase, showToast } from './auth.js'
-import { ADMIN_EMAIL } from '../config/config.js'
+import { supabase, showToast, ADMIN_EMAIL } from './auth.js'
 
 const TECH_SESSION_KEY = 'maintainiq-tech-session'
 
