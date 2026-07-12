@@ -20,6 +20,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   loadIssues()
   loadMaintenanceRecords()
   loadDashboardStats()
+  loadAnalytics()
   loadHistoryLog()
 })
 
@@ -330,30 +331,52 @@ async function loadIssues() {
   }
 
   tbody.innerHTML = issues.map(issue => {
-    const priorityClass = issue.priority === 'Critical' ? 'badge-red'
+    const isCritical = issue.priority === 'Critical'
+
+    const statusClass = issue.status === 'Reported' ? 'badge-orange'
+      : issue.status === 'Assigned' ? 'badge-blue'
+      : issue.status === 'Inspection Started' ? 'badge-blue'
+      : issue.status === 'Maintenance In Progress' ? 'badge-purple'
+      : issue.status === 'Waiting for Parts' ? 'badge-orange'
+      : issue.status === 'Resolved' ? 'badge-emerald'
+      : issue.status === 'Closed' ? 'badge-gray'
+      : 'badge-purple'
+
+    // Critical treatment: red badge with pulse, alert icon
+    const priorityClass = isCritical ? 'badge-critical'
       : issue.priority === 'High' ? 'badge-orange'
       : issue.priority === 'Medium' ? 'badge-blue'
       : 'badge-emerald'
 
-    const statusClass = issue.status === 'Reported' ? 'badge-orange'
-      : issue.status === 'Assigned' ? 'badge-blue'
-      : issue.status === 'Resolved' ? 'badge-emerald'
-      : 'badge-purple'
+    const priorityIcon = isCritical
+      ? '<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 2L1 21h22L12 2zm1 14h-2v-2h2v2zm0-4h-2V8h2v4z"/></svg> '
+      : ''
 
     const assignedDisplay = issue.technician_email || '—'
 
+    // Actions column
+    let actionsHtml = ''
+    if (issue.status === 'Reported') {
+      actionsHtml = `<button class="table-action-btn" data-action="assign" data-issue="${issue.id}" data-title="${issue.title}">Assign</button>`
+    } else if (issue.status === 'Resolved') {
+      actionsHtml = `
+        <button class="table-action-btn" data-action="close" data-issue="${issue.id}" style="border-color:var(--border-light);color:var(--text-gray-400);">Close</button>
+        <button class="table-action-btn" data-action="reopen" data-issue="${issue.id}" style="border-color:var(--accent-blue-border);color:var(--accent-blue);">Reopen</button>
+      `
+    } else if (issue.status === 'Closed') {
+      actionsHtml = `<button class="table-action-btn" data-action="reopen" data-issue="${issue.id}" style="border-color:var(--accent-blue-border);color:var(--accent-blue);">Reopen</button>`
+    } else {
+      actionsHtml = `<span class="badge ${statusClass}">${issue.status}</span>`
+    }
+
     return `
-      <tr>
+      <tr${isCritical ? ' class="critical-row"' : ''}>
         <td>${issue.title}</td>
         <td>${issue.assetId}</td>
-        <td><span class="badge ${priorityClass}">${issue.priority}</span></td>
+        <td><span class="badge ${priorityClass}">${priorityIcon}${issue.priority}</span></td>
         <td><span class="badge ${statusClass}">${issue.status}</span></td>
         <td>${assignedDisplay}</td>
-        <td>
-          ${!issue.technician_email
-            ? `<button class="table-action-btn" data-action="assign" data-issue="${issue.id}" data-title="${issue.title}">Assign</button>`
-            : `<span class="badge badge-blue">Assigned</span>`}
-        </td>
+        <td>${actionsHtml}</td>
       </tr>
     `
   }).join('')
@@ -650,11 +673,11 @@ async function loadDashboardStats() {
     .from('assets')
     .select('id', { count: 'exact', head: true })
 
-  // Count open issues (not Resolved)
+  // Count open issues (not Closed)
   const { count: openIssues } = await supabase
     .from('issues')
     .select('id', { count: 'exact', head: true })
-    .neq('status', 'Resolved')
+    .neq('status', 'Closed')
 
   // Count technicians
   const { count: totalTechs } = await supabase
@@ -681,6 +704,330 @@ async function loadDashboardStats() {
   if (emptySection && (totalAssets > 0 || openIssues > 0)) {
     emptySection.style.display = 'none'
   }
+}
+
+/* =====================================================================
+   ANALYTICS CHARTS
+   ===================================================================== */
+
+// Track chart instances so we can destroy them before re-creating
+let chartAssetCategory = null
+let chartIssueStatus = null
+let chartIssuesTime = null
+let chartPriority = null
+
+async function loadAnalytics() {
+  const section = document.getElementById('analytics-section')
+  if (!section) return
+
+  // Show loading states
+  showAnalyticsLoading('asset-category')
+  showAnalyticsLoading('issue-status')
+  showAnalyticsLoading('issues-time')
+  showAnalyticsLoading('priority')
+
+  try {
+    // Fetch data in parallel
+    const [assetResult, issueResult] = await Promise.all([
+      supabase.from('assets').select('category, status'),
+      supabase.from('issues').select('status, priority, created_at'),
+    ])
+
+    const assets = assetResult.data || []
+    const issues = issueResult.data || []
+
+    // If there's any data, hide the big empty-state message
+    const emptyState = document.getElementById('dashboard-empty-state')
+    if (assets.length > 0 || issues.length > 0) {
+      if (emptyState) emptyState.classList.add('hidden')
+    }
+
+    // --- 1. Assets by Category (Doughnut) ---
+    if (assets.length > 0) {
+      const categoryCounts = {}
+      assets.forEach(a => {
+        const cat = a.category || 'Uncategorized'
+        categoryCounts[cat] = (categoryCounts[cat] || 0) + 1
+      })
+      renderDoughnutChart('chart-asset-category', 'asset-category',
+        Object.keys(categoryCounts), Object.values(categoryCounts),
+        getCategoryColors(Object.keys(categoryCounts))
+      )
+    } else {
+      showAnalyticsEmpty('asset-category')
+    }
+
+    // --- 2. Issue Status Overview (Doughnut) ---
+    if (issues.length > 0) {
+      const statusCounts = {}
+      const statusColors = {
+        Reported: '#fb923c',
+        Assigned: '#3b82f6',
+        'Inspection Started': '#06b6d4',
+        'Maintenance In Progress': '#8b5cf6',
+        'Waiting for Parts': '#f59e0b',
+        Resolved: '#10b981',
+        Closed: '#a1a1aa',
+        Reopened: '#f59e0b',
+      }
+      issues.forEach(i => {
+        const s = i.status || 'Reported'
+        statusCounts[s] = (statusCounts[s] || 0) + 1
+      })
+      const labels = Object.keys(statusCounts).filter(k => statusCounts[k] > 0)
+      const values = labels.map(l => statusCounts[l])
+      const colors = labels.map(l => statusColors[l] || '#a1a1aa')
+      renderDoughnutChart('chart-issue-status', 'issue-status',
+        labels, values, colors
+      )
+    } else {
+      showAnalyticsEmpty('issue-status')
+    }
+
+    // --- 3. Issues Over Time (Bar — last 6 months) ---
+    if (issues.length > 0) {
+      const now = new Date()
+      const monthLabels = []
+      const monthCounts = []
+
+      for (let i = 5; i >= 0; i--) {
+        const d = new Date(now.getFullYear(), now.getMonth() - i, 1)
+        const label = d.toLocaleDateString('en-US', { month: 'short', year: '2-digit' })
+        monthLabels.push(label)
+        monthCounts.push(0)
+      }
+
+      issues.forEach(i => {
+        if (!i.created_at) return
+        const d = new Date(i.created_at)
+        const m = d.getMonth()
+        const y = d.getFullYear()
+        for (let j = 0; j < 6; j++) {
+          const base = new Date(now.getFullYear(), now.getMonth() - (5 - j), 1)
+          if (base.getMonth() === m && base.getFullYear() === y) {
+            monthCounts[j]++
+            break
+          }
+        }
+      })
+
+      renderBarChart('chart-issues-time', 'issues-time',
+        monthLabels, monthCounts,
+        getComputedStyleVal('--accent-emerald') || '#10b981'
+      )
+    } else {
+      showAnalyticsEmpty('issues-time')
+    }
+
+    // --- 4. Priority Breakdown (Bar) ---
+    if (issues.length > 0) {
+      const priorityCounts = { Critical: 0, High: 0, Medium: 0, Low: 0 }
+      issues.forEach(i => {
+        const p = i.priority || 'Low'
+        priorityCounts[p] = (priorityCounts[p] || 0) + 1
+      })
+      const labels = Object.keys(priorityCounts).filter(k => priorityCounts[k] > 0)
+      const values = labels.map(l => priorityCounts[l])
+      const colors = labels.map(l =>
+        l === 'Critical' ? '#ef4444'
+        : l === 'High' ? '#fb923c'
+        : l === 'Medium' ? '#3b82f6'
+        : '#10b981'
+      )
+      renderBarChart('chart-priority', 'priority',
+        labels, values, colors
+      )
+    } else {
+      showAnalyticsEmpty('priority')
+    }
+
+  } catch (err) {
+    console.error('Analytics error:', err)
+    // On error, show empty states for all charts
+    ;['asset-category', 'issue-status', 'issues-time', 'priority'].forEach(id => {
+      showAnalyticsEmpty(id)
+    })
+  }
+}
+
+/* --- Chart render helpers --- */
+
+function renderDoughnutChart(canvasId, loadingId, labels, data, colors) {
+  hideAnalyticsLoading(loadingId)
+  const canvas = document.getElementById(canvasId)
+  if (!canvas) return
+
+  const ctx = canvas.getContext('2d')
+  const textColor = getComputedStyleVal('--text-gray-400') || '#a1a1aa'
+  const borderColor = getComputedStyleVal('--bg-secondary') || '#1a1a2e'
+
+  // Destroy previous instance
+  if (canvasId === 'chart-asset-category' && chartAssetCategory) chartAssetCategory.destroy()
+  if (canvasId === 'chart-issue-status' && chartIssueStatus) chartIssueStatus.destroy()
+
+  const chart = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels,
+      datasets: [{
+        data,
+        backgroundColor: colors,
+        borderColor: borderColor,
+        borderWidth: 2,
+        hoverOffset: 6,
+      }],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: true,
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: {
+            color: textColor,
+            padding: 12,
+            font: { size: 11 },
+            boxWidth: 12,
+            boxHeight: 12,
+          },
+        },
+        tooltip: {
+          backgroundColor: getComputedStyleVal('--bg-tertiary') || '#16213e',
+          titleColor: getComputedStyleVal('--text-white') || '#fff',
+          bodyColor: getComputedStyleVal('--text-gray-300') || '#d1d5db',
+          borderColor: getComputedStyleVal('--border-light') || '#2a2a4a',
+          borderWidth: 1,
+          padding: 10,
+          cornerRadius: 8,
+          displayColors: true,
+          callbacks: {
+            label: function(context) {
+              const total = context.dataset.data.reduce((a, b) => a + b, 0)
+              const pct = total > 0 ? Math.round((context.parsed / total) * 100) : 0
+              return ` ${context.label}: ${context.parsed} (${pct}%)`
+            },
+          },
+        },
+      },
+      cutout: '65%',
+    },
+  })
+
+  if (canvasId === 'chart-asset-category') chartAssetCategory = chart
+  if (canvasId === 'chart-issue-status') chartIssueStatus = chart
+}
+
+function renderBarChart(canvasId, loadingId, labels, data, colors) {
+  hideAnalyticsLoading(loadingId)
+  const canvas = document.getElementById(canvasId)
+  if (!canvas) return
+
+  const ctx = canvas.getContext('2d')
+  const textColor = getComputedStyleVal('--text-gray-400') || '#a1a1aa'
+  const gridColor = getComputedStyleVal('--border-subtle') || '#1e1e3a'
+
+  // Destroy previous instance
+  if (canvasId === 'chart-issues-time' && chartIssuesTime) chartIssuesTime.destroy()
+  if (canvasId === 'chart-priority' && chartPriority) chartPriority.destroy()
+
+  const isSingleColor = typeof colors === 'string'
+  const bgColors = isSingleColor
+    ? labels.map(() => colors + '33')  // add 20% alpha
+    : colors.map(c => c + '33')
+  const borderColors = isSingleColor
+    ? labels.map(() => colors)
+    : colors
+
+  const chart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [{
+        data,
+        backgroundColor: bgColors,
+        borderColor: borderColors,
+        borderWidth: 2,
+        borderRadius: 4,
+        maxBarThickness: 48,
+      }],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: true,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: getComputedStyleVal('--bg-tertiary') || '#16213e',
+          titleColor: getComputedStyleVal('--text-white') || '#fff',
+          bodyColor: getComputedStyleVal('--text-gray-300') || '#d1d5db',
+          borderColor: getComputedStyleVal('--border-light') || '#2a2a4a',
+          borderWidth: 1,
+          padding: 10,
+          cornerRadius: 8,
+        },
+      },
+      scales: {
+        x: {
+          ticks: { color: textColor, font: { size: 10 } },
+          grid: { color: gridColor, drawBorder: false },
+        },
+        y: {
+          beginAtZero: true,
+          ticks: {
+            color: textColor,
+            font: { size: 10 },
+            stepSize: 1,
+          },
+          grid: { color: gridColor, drawBorder: false },
+        },
+      },
+    },
+  })
+
+  if (canvasId === 'chart-issues-time') chartIssuesTime = chart
+  if (canvasId === 'chart-priority') chartPriority = chart
+}
+
+/* --- Loading / Empty state helpers --- */
+
+function showAnalyticsLoading(id) {
+  const loading = document.getElementById(`loading-${id}`)
+  const empty = document.getElementById(`empty-${id}`)
+  if (loading) loading.classList.add('active')
+  if (empty) empty.classList.remove('active')
+}
+
+function hideAnalyticsLoading(id) {
+  const loading = document.getElementById(`loading-${id}`)
+  if (loading) loading.classList.remove('active')
+}
+
+function showAnalyticsEmpty(id) {
+  const loading = document.getElementById(`loading-${id}`)
+  const empty = document.getElementById(`empty-${id}`)
+  if (loading) loading.classList.remove('active')
+  if (empty) empty.classList.add('active')
+}
+
+/* --- Utility: read a CSS custom property value --- */
+
+function getComputedStyleVal(name) {
+  try {
+    return getComputedStyle(document.documentElement).getPropertyValue(name).trim() || null
+  } catch {
+    return null
+  }
+}
+
+/* --- Utility: pick distinct colors for category doughnut --- */
+
+function getCategoryColors(categories) {
+  const palette = [
+    '#10b981', '#3b82f6', '#fb923c', '#8b5cf6',
+    '#ef4444', '#f59e0b', '#06b6d4', '#ec4899',
+    '#14b8a6', '#6366f1', '#f97316', '#84cc16',
+  ]
+  return categories.map((_, i) => palette[i % palette.length])
 }
 
 /* =====================================================================
@@ -740,6 +1087,8 @@ async function loadHistoryLog() {
         type: e.action === 'Asset Created' ? 'create'
           : e.action === 'Issue Reported' ? 'issue'
           : e.action === 'Issue Resolved' ? 'resolve'
+          : e.action === 'Issue Closed' ? 'close'
+          : e.action === 'Issue Reopened' ? 'reopen'
           : 'update',
       })
     })
@@ -810,6 +1159,8 @@ async function loadHistoryLog() {
     const dotClass = e.type === 'create' ? 'dot-create'
       : e.type === 'issue' ? 'dot-issue'
       : e.type === 'resolve' ? 'dot-resolve'
+      : e.type === 'close' ? 'dot-close'
+      : e.type === 'reopen' ? 'dot-reopen'
       : 'dot-update'
 
     // Format detail — highlight old → new transitions
@@ -1010,8 +1361,123 @@ function initTableActions() {
       // Load technicians into dropdown
       loadAssignTechDropdown()
       openModal('modal-assign-tech')
+    } else if (action === 'close') {
+      const issueId = btn.dataset.issue
+      handleCloseIssue(issueId)
+    } else if (action === 'reopen') {
+      const issueId = btn.dataset.issue
+      handleReopenIssue(issueId)
     }
   })
+}
+
+/* --- Custom confirmation modal (replaces native confirm) --- */
+
+function showConfirmModal(message) {
+  return new Promise(resolve => {
+    const overlay = document.getElementById('modal-confirm')
+    const msgEl = document.getElementById('modal-confirm-message')
+    const okBtn = document.getElementById('modal-confirm-ok')
+    const cancelBtn = document.getElementById('modal-confirm-cancel')
+    if (!overlay || !msgEl) { resolve(false); return }
+
+    msgEl.textContent = message
+    overlay.classList.add('open')
+    document.body.style.overflow = 'hidden'
+
+    function cleanup(result) {
+      overlay.classList.remove('open')
+      document.body.style.overflow = ''
+      okBtn.removeEventListener('click', onOk)
+      cancelBtn.removeEventListener('click', onCancel)
+      overlay.removeEventListener('click', onBackdrop)
+      document.querySelectorAll('[data-modal="modal-confirm"]').forEach(el => {
+        el.removeEventListener('click', onCancel)
+      })
+      resolve(result)
+    }
+
+    function onOk() { cleanup(true) }
+    function onCancel() { cleanup(false) }
+    function onBackdrop(e) {
+      if (e.target === overlay) cleanup(false)
+    }
+
+    okBtn.addEventListener('click', onOk)
+    cancelBtn.addEventListener('click', onCancel)
+    overlay.addEventListener('click', onBackdrop)
+    document.querySelectorAll('[data-modal="modal-confirm"]').forEach(el => {
+      el.addEventListener('click', onCancel)
+    })
+  })
+}
+
+async function handleCloseIssue(issueId) {
+  const confirmed = await showConfirmModal('Close this issue? It will no longer be editable until reopened.')
+  if (!confirmed) return
+
+  try {
+    const { error } = await supabase
+      .from('issues')
+      .update({ status: 'Closed', closed_at: new Date().toISOString() })
+      .eq('id', issueId)
+
+    if (error) throw error
+
+    // Log history
+    createHistoryLog({
+      action: 'Issue Closed',
+      actor: 'admin@admin.com',
+      detail: `Issue #${issueId} closed`,
+      issue_id: parseInt(issueId),
+    })
+
+    showToast('Issue closed successfully.', 'success')
+    await loadIssues()
+  } catch (err) {
+    showToast(err.message, 'error')
+  }
+}
+
+async function handleReopenIssue(issueId) {
+  const confirmed = await showConfirmModal('Reopen this issue? It will be set back to "Assigned" status.')
+  if (!confirmed) return
+
+  try {
+    // First get current issue to know the reopened count
+    const { data: issue } = await supabase
+      .from('issues')
+      .select('reopened_count')
+      .eq('id', issueId)
+      .single()
+
+    const reopenedCount = (issue?.reopened_count || 0) + 1
+
+    const { error } = await supabase
+      .from('issues')
+      .update({
+        status: 'Assigned',
+        reopened_at: new Date().toISOString(),
+        reopened_count: reopenedCount,
+        closed_at: null,
+      })
+      .eq('id', issueId)
+
+    if (error) throw error
+
+    // Log history
+    createHistoryLog({
+      action: 'Issue Reopened',
+      actor: 'admin@admin.com',
+      detail: `Issue #${issueId} reopened (reopened ${reopenedCount} time(s))`,
+      issue_id: parseInt(issueId),
+    })
+
+    showToast('Issue reopened successfully.', 'success')
+    await loadIssues()
+  } catch (err) {
+    showToast(err.message, 'error')
+  }
 }
 
 async function loadAssignTechDropdown() {

@@ -167,6 +167,18 @@
   background: #fff;
 }
 
+.public-asset-retired-notice {
+  display: block;
+  text-align: center;
+  font-size: 0.8125rem;
+  color: var(--text-gray-500);
+  padding: 0.625rem 1rem;
+  border: 1px dashed var(--border-light);
+  border-radius: 8px;
+  background: var(--bg-tertiary);
+  margin-top: 0.75rem;
+}
+
 .report-issue-btn {
   width: 100%;
   justify-content: center;

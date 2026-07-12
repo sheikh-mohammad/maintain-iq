@@ -407,6 +407,15 @@
   background: var(--bg-tertiary);
 }
 
+/* Critical issue row — red left border accent */
+.admin-table tr.critical-row td:first-child {
+  border-left: 3px solid #ef4444;
+}
+
+.admin-table tr.critical-row {
+  background: rgba(239, 68, 68, 0.03);
+}
+
 .table-empty {
   text-align: center;
   color: var(--text-gray-500) !important;
@@ -632,10 +641,14 @@ select.form-input {
 .dot-update  { background: #f59e0b; }
 .dot-issue   { background: #ef4444; }
 .dot-resolve { background: #10b981; }
+.dot-close   { background: #71717a; }
+.dot-reopen  { background: #f59e0b; }
 .history-entry-dot.dot-create  { background: #3b82f6; }
 .history-entry-dot.dot-update  { background: #f59e0b; }
 .history-entry-dot.dot-issue   { background: #ef4444; }
 .history-entry-dot.dot-resolve { background: #10b981; }
+.history-entry-dot.dot-close   { background: #71717a; }
+.history-entry-dot.dot-reopen  { background: #f59e0b; }
 
 /* --- Timeline --- */
 
@@ -831,6 +844,117 @@ select.form-input {
   display: block;
 }
 
+/* --- Analytics Section --- */
+
+.analytics-section {
+  margin-top: 2rem;
+}
+
+.analytics-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+}
+
+.analytics-card {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  overflow: hidden;
+  transition: border-color var(--transition-fast);
+}
+
+.analytics-card:hover {
+  border-color: var(--border-active);
+}
+
+.analytics-card-header {
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.analytics-card-header h4 {
+  margin: 0;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--text-white);
+}
+
+.analytics-chart-wrapper {
+  position: relative;
+  padding: 1.25rem;
+  min-height: 220px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.analytics-chart-wrapper canvas {
+  width: 100% !important;
+  height: auto !important;
+  max-height: 260px;
+}
+
+/* Loading skeleton */
+.analytics-loading {
+  display: none;
+  position: absolute;
+  inset: 0;
+  padding: 1rem;
+}
+
+.analytics-loading.active {
+  display: block;
+}
+
+.analytics-skeleton {
+  width: 100%;
+  height: 100%;
+  min-height: 200px;
+  background: linear-gradient(90deg,
+    var(--bg-tertiary) 25%,
+    var(--bg-secondary) 50%,
+    var(--bg-tertiary) 75%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-pulse 1.5s ease-in-out infinite;
+  border-radius: 8px;
+}
+
+@keyframes skeleton-pulse {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Analytics empty state */
+.analytics-empty {
+  display: none;
+  text-align: center;
+  padding: 2rem 1rem;
+  color: var(--text-gray-500);
+  font-size: 0.875rem;
+}
+
+.analytics-empty.active {
+  display: block;
+}
+
+.analytics-empty p {
+  margin: 0;
+}
+
+/* Chart.js dark mode overrides — applied via plugin */
+.chartjs-tooltip {
+  background: var(--bg-tertiary) !important;
+  border: 1px solid var(--border-light) !important;
+  color: var(--text-white) !important;
+}
+
+/* Hide empty state when charts are visible */
+#dashboard-empty-state.hidden {
+  display: none;
+}
+
 /* --- Responsive --- */
 @media (max-width: 768px) {
   .admin-sidebar {
@@ -887,6 +1011,15 @@ select.form-input {
     min-width: 600px;
   }
 
+  /* Analytics: single column on tablets and below */
+  .analytics-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .analytics-chart-wrapper {
+    min-height: 200px;
+  }
+
   /* Modal adjustments for tablets */
   .modal {
     max-width: 100%;
@@ -906,6 +1039,21 @@ select.form-input {
 }
 
 @media (max-width: 640px) {
+  .analytics-chart-wrapper {
+    min-height: 180px;
+  }
+
+  .analytics-card-header {
+    padding: 0.75rem 1rem;
+  }
+
+  .analytics-card-header h4 {
+    font-size: 0.8125rem;
+  }
+
+  .analytics-chart-wrapper {
+    padding: 0.75rem;
+  }
   .stats-cards {
     grid-template-columns: 1fr;
   }
@@ -924,7 +1072,7 @@ select.form-input {
   #page-maintenance .admin-table td:nth-child(4) {
     display: none;
   }
-
+}
 
 @media (max-width: 480px) {
   /* Maintenance records: hide Technician and Cost columns */

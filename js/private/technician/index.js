@@ -167,26 +167,61 @@ async function loadTechIssues() {
   }
 
   tbody.innerHTML = issues.map(issue => {
-    const priorityClass = issue.priority === 'Critical' ? 'badge-red'
+    const isCritical = issue.priority === 'Critical'
+
+    // Priority badge — critical gets special pulse class
+    const priorityClass = isCritical ? 'badge-critical'
       : issue.priority === 'High' ? 'badge-orange'
       : issue.priority === 'Medium' ? 'badge-blue'
       : 'badge-emerald'
 
+    const priorityIcon = isCritical
+      ? '<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 2L1 21h22L12 2zm1 14h-2v-2h2v2zm0-4h-2V8h2v4z"/></svg>'
+      : ''
+
     const statusClass = issue.status === 'Reported' ? 'badge-orange'
       : issue.status === 'Assigned' ? 'badge-blue'
+      : issue.status === 'Inspection Started' ? 'badge-blue'
+      : issue.status === 'Maintenance In Progress' ? 'badge-purple'
+      : issue.status === 'Waiting for Parts' ? 'badge-orange'
       : issue.status === 'Resolved' ? 'badge-emerald'
+      : issue.status === 'Closed' ? 'badge-gray'
       : 'badge-purple'
 
+    // Actions column: show button for open issues, nothing for closed/resolved
+    const openStatuses = ['Reported', 'Assigned', 'Inspection Started', 'Maintenance In Progress', 'Waiting for Parts']
+    const actionsHtml = openStatuses.includes(issue.status)
+      ? `<button class="tech-action-btn" data-issue-id="${issue.id}" data-issue-title="${issue.title}">Perform Maintenance</button>`
+      : '—'
+
     return `
-      <tr>
+      <tr${isCritical ? ' class="critical-row"' : ''}>
         <td>${issue.title}</td>
         <td>${issue.assetId}</td>
-        <td><span class="badge ${priorityClass}">${issue.priority}</span></td>
+        <td><span class="badge ${priorityClass}">${priorityIcon}${issue.priority}</span></td>
         <td><span class="badge ${statusClass}">${issue.status}</span></td>
-        <td>—</td>
+        <td>${actionsHtml}</td>
       </tr>
     `
   }).join('')
+
+  // Attach "Perform Maintenance" click handlers — navigate to maintenance page
+  tbody.querySelectorAll('.tech-action-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const select = document.getElementById('maintenance-issue-select')
+      if (select) {
+        // Set the dropdown value and navigate to maintenance tab
+        select.value = btn.dataset.issueId
+        // Trigger change event to enable the submit button
+        const evt = new Event('change')
+        select.dispatchEvent(evt)
+
+        // Navigate to the maintenance page
+        const link = document.querySelector('.tech-sidebar-link[data-page="maintenance"]')
+        if (link) link.click()
+      }
+    })
+  })
 }
 
 /* --- Maintenance Form --- */
@@ -208,9 +243,13 @@ async function loadMaintenanceDropdown() {
     .from('issues')
     .select('id, title, assetId, status')
     .eq('technician_email', techEmail)
+    .not('status', 'in', '("Closed","Resolved")')
     .order('created_at', { ascending: false })
 
-  if (!issues || issues.length === 0) return
+  if (!issues || issues.length === 0) {
+    select.innerHTML = '<option value="">-- No open issues available --</option>'
+    return
+  }
 
   select.innerHTML = '<option value="">-- Select an issue --</option>'
     + issues.map(i =>
@@ -234,8 +273,9 @@ async function handleSaveMaintenance() {
   const issueId = document.getElementById('maintenance-issue-select').value
   const notes = document.getElementById('maintenance-notes').value.trim()
   const workDone = document.getElementById('maintenance-work').value.trim()
-  const cost = parseFloat(document.getElementById('maintenance-cost').value) || 0
+  const cost = parseFloat(document.getElementById('maintenance-cost').value)
   const status = document.getElementById('maintenance-status').value
+  const nextServiceDate = document.getElementById('maintenance-next-service').value || null
   const fileInput = document.getElementById('maintenance-evidence')
   const submitBtn = document.getElementById('btn-save-maintenance')
 
@@ -244,9 +284,31 @@ async function handleSaveMaintenance() {
     return
   }
 
+  // Cost validation: must be non-negative
+  if (isNaN(cost) || cost < 0) {
+    showToast('Maintenance cost cannot be negative.', 'error')
+    return
+  }
+
+  // Work done required when resolving
+  if (status === 'Resolved' && !workDone) {
+    showToast('Please describe the work performed before resolving.', 'error')
+    return
+  }
+
   if (!workDone) {
     showToast('Please describe the work performed.', 'error')
     return
+  }
+
+  // Next service date validation: cannot be before today when resolving
+  if (status === 'Resolved' && nextServiceDate) {
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+    if (new Date(nextServiceDate) < today) {
+      showToast('Next service date cannot be before today.', 'error')
+      return
+    }
   }
 
   submitBtn.textContent = 'Saving...'
@@ -262,14 +324,24 @@ async function handleSaveMaintenance() {
       techName = s.name || ''
     } catch { /* ignore */ }
 
-    // Get the issue details to find the assetId
-    const { data: issue } = await supabase
+    // Get the issue details — verify ownership and get priority
+    const { data: issue, error: issueFetchError } = await supabase
       .from('issues')
-      .select('assetId')
+      .select('assetId, technician_email, priority, status')
       .eq('id', issueId)
       .single()
 
-    if (!issue) throw new Error('Issue not found')
+    if (issueFetchError || !issue) throw new Error('Issue not found')
+
+    // Verify ownership: only the assigned technician can update
+    if (issue.technician_email !== techEmail) {
+      throw new Error('This issue is not assigned to you.')
+    }
+
+    // Verify issue is not closed
+    if (issue.status === 'Closed') {
+      throw new Error('This issue is closed and cannot be edited.')
+    }
 
     // Upload evidence image if provided
     let evidenceUrl = ''
@@ -284,7 +356,6 @@ async function handleSaveMaintenance() {
 
       if (uploadError) throw uploadError
 
-      // Get public URL
       const { data: { publicUrl } } = supabase.storage
         .from('maintenance-evidence')
         .getPublicUrl(fileName)
@@ -301,11 +372,12 @@ async function handleSaveMaintenance() {
         technician_email: techEmail,
         diagnosis: notes,
         actions_taken: workDone,
-        cost: cost,
+        cost: cost || 0,
         status: status === 'Resolved' ? 'Completed' : 'In Progress',
         notes: notes,
         evidence_url: evidenceUrl,
         completed_at: status === 'Resolved' ? new Date().toISOString() : null,
+        next_service_date: nextServiceDate,
       })
 
     if (insertError) throw insertError
@@ -313,12 +385,15 @@ async function handleSaveMaintenance() {
     // Update the issue status
     const { error: updateError } = await supabase
       .from('issues')
-      .update({ status: status })
+      .update({
+        status: status,
+        resolved_at: status === 'Resolved' ? new Date().toISOString() : null,
+      })
       .eq('id', issueId)
 
     if (updateError) throw updateError
 
-    // Update asset status when resolved
+    // Update asset status based on maintenance status
     if (status === 'Resolved') {
       await supabase
         .from('assets')
@@ -336,13 +411,22 @@ async function handleSaveMaintenance() {
         .eq('assetCode', issue.assetId)
     }
 
+    // Trigger "Out of Service" for critical issues
+    if (issue.priority === 'Critical' &&
+        ['Inspection Started', 'Maintenance In Progress', 'Waiting for Parts'].includes(status)) {
+      await supabase
+        .from('assets')
+        .update({ status: 'Out of Service' })
+        .eq('assetCode', issue.assetId)
+    }
+
     // Log history
     createHistoryLog({
       asset_code: issue.assetId,
       action: status === 'Resolved' ? 'Issue Resolved' : 'Maintenance Updated',
       actor: techEmail,
       detail: status === 'Resolved'
-        ? `Resolved — Cost: $${cost}`
+        ? `Resolved — Cost: $${cost || 0}`
         : `${status} — ${workDone.substring(0, 80)}`,
       issue_id: parseInt(issueId),
     })
@@ -353,6 +437,7 @@ async function handleSaveMaintenance() {
     document.getElementById('maintenance-notes').value = ''
     document.getElementById('maintenance-work').value = ''
     document.getElementById('maintenance-cost').value = ''
+    document.getElementById('maintenance-next-service').value = ''
     document.getElementById('maintenance-status').selectedIndex = 0
     document.getElementById('maintenance-evidence').value = ''
     document.getElementById('maintenance-issue-select').value = ''

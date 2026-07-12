@@ -173,8 +173,83 @@
                 </div>
               </div>
             </div>
-            <div class="admin-empty-section">
+            <div class="admin-empty-section" id="dashboard-empty-state">
               <p>No data available yet. Start by adding assets and technicians.</p>
+            </div>
+
+            <!-- ==================== ANALYTICS CHARTS ==================== -->
+            <div class="analytics-section" id="analytics-section">
+              <div class="admin-page-header">
+                <h3>Analytics</h3>
+                <p>Visual insights into your assets, issues, and operations.</p>
+              </div>
+              <div class="analytics-grid">
+
+                <!-- Chart: Asset Category Distribution -->
+                <div class="analytics-card">
+                  <div class="analytics-card-header">
+                    <h4>Assets by Category</h4>
+                  </div>
+                  <div class="analytics-chart-wrapper">
+                    <canvas id="chart-asset-category"></canvas>
+                    <div class="analytics-loading" id="loading-asset-category">
+                      <div class="analytics-skeleton"></div>
+                    </div>
+                    <div class="analytics-empty" id="empty-asset-category">
+                      <p>No asset data to chart yet.</p>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Chart: Issue Status Overview -->
+                <div class="analytics-card">
+                  <div class="analytics-card-header">
+                    <h4>Issue Status Overview</h4>
+                  </div>
+                  <div class="analytics-chart-wrapper">
+                    <canvas id="chart-issue-status"></canvas>
+                    <div class="analytics-loading" id="loading-issue-status">
+                      <div class="analytics-skeleton"></div>
+                    </div>
+                    <div class="analytics-empty" id="empty-issue-status">
+                      <p>No issue data to chart yet.</p>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Chart: Issues Over Time -->
+                <div class="analytics-card">
+                  <div class="analytics-card-header">
+                    <h4>Issues Over Time (Monthly)</h4>
+                  </div>
+                  <div class="analytics-chart-wrapper">
+                    <canvas id="chart-issues-time"></canvas>
+                    <div class="analytics-loading" id="loading-issues-time">
+                      <div class="analytics-skeleton"></div>
+                    </div>
+                    <div class="analytics-empty" id="empty-issues-time">
+                      <p>No issue data to chart yet.</p>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Chart: Priority Breakdown -->
+                <div class="analytics-card">
+                  <div class="analytics-card-header">
+                    <h4>Issue Priority Breakdown</h4>
+                  </div>
+                  <div class="analytics-chart-wrapper">
+                    <canvas id="chart-priority"></canvas>
+                    <div class="analytics-loading" id="loading-priority">
+                      <div class="analytics-skeleton"></div>
+                    </div>
+                    <div class="analytics-empty" id="empty-priority">
+                      <p>No issue data to chart yet.</p>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
             </div>
           </section>
 
@@ -469,6 +544,24 @@
       </div>
     </div>
 
+    <!-- Confirm Action Modal -->
+    <div class="modal-overlay" id="modal-confirm">
+      <div class="modal" style="max-width: 400px;">
+        <div class="modal-header">
+          <h3 id="modal-confirm-title">Confirm Action</h3>
+          <button class="modal-close" data-modal="modal-confirm">&times;</button>
+        </div>
+        <div class="modal-body">
+          <p style="color: var(--text-gray-300); margin: 0; font-size: 0.9375rem; line-height: 1.5;" id="modal-confirm-message"></p>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" id="modal-confirm-cancel">Cancel</button>
+          <button class="btn btn-emerald" id="modal-confirm-ok">Confirm</button>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script type="module" src="../../../js/app.js"></script>

@@ -67,16 +67,23 @@ async function loadSingleAsset(assetCode) {
     loadAllAssets()
   })
 
-  // Wire report button (only if logged in)
+  // Wire report button (only if logged in and asset not retired)
   const reportBtn = document.getElementById('btn-report-from-detail')
-  if (isLoggedIn) {
+  if (asset.status === 'Retired') {
+    reportBtn.textContent = 'This asset is retired'
+    reportBtn.className = 'btn btn-secondary'
+    reportBtn.onclick = null
+    reportBtn.style.opacity = '0.5'
+  } else if (isLoggedIn) {
     reportBtn.textContent = 'Report Issue for This Asset'
     reportBtn.className = 'btn btn-primary'
     reportBtn.onclick = () => openReportModal(asset.assetCode, asset.name)
+    reportBtn.style.opacity = '1'
   } else {
     reportBtn.textContent = 'Sign in to Report Issue'
     reportBtn.className = 'btn btn-secondary'
     reportBtn.onclick = () => { window.location.href = '../auth/login.html' }
+    reportBtn.style.opacity = '1'
   }
   reportBtn.style.display = ''
 }
@@ -93,7 +100,10 @@ function populateAssetDetail(asset) {
   const statusEl = document.getElementById('detail-asset-status')
   const statusClass = asset.status === 'Operational' ? 'badge-emerald'
     : asset.status === 'Issue Reported' ? 'badge-orange'
+    : asset.status === 'Under Inspection' ? 'badge-blue'
     : asset.status === 'Under Maintenance' ? 'badge-purple'
+    : asset.status === 'Out of Service' ? 'badge-red'
+    : asset.status === 'Retired' ? 'badge-gray'
     : 'badge-red'
   statusEl.textContent = asset.status
   statusEl.className = `badge ${statusClass}`
@@ -192,12 +202,27 @@ async function loadAllAssets() {
   const scannedCode = window.location.hash.replace('#', '').trim()
 
   grid.innerHTML = assets.map(a => {
+    const isRetired = a.status === 'Retired'
+
     const statusClass = a.status === 'Operational' ? 'badge-emerald'
       : a.status === 'Issue Reported' ? 'badge-orange'
+      : a.status === 'Under Inspection' ? 'badge-blue'
       : a.status === 'Under Maintenance' ? 'badge-purple'
+      : a.status === 'Out of Service' ? 'badge-red'
+      : a.status === 'Retired' ? 'badge-gray'
       : 'badge-red'
 
     const isHighlighted = scannedCode && String(a.assetCode) === scannedCode
+
+    // Report issue button or retired notice
+    let actionHtml
+    if (isRetired) {
+      actionHtml = `<span class="public-asset-retired-notice">This asset is retired and cannot accept new issues.</span>`
+    } else if (isLoggedIn) {
+      actionHtml = `<button class="btn btn-primary report-issue-btn" data-code="${a.assetCode}" data-name="${a.name}">Report Issue</button>`
+    } else {
+      actionHtml = `<a href="../auth/login.html" class="btn btn-secondary" style="width:100%;justify-content:center;text-decoration:none;">Sign in to Report Issue</a>`
+    }
 
     return `
       <div class="public-asset-card ${isHighlighted ? 'highlighted' : ''}" data-code="${a.assetCode}">
@@ -217,13 +242,7 @@ async function loadAllAssets() {
 
         <div class="public-asset-qr" id="qr-${a.assetCode}"></div>
 
-        ${isLoggedIn
-          ? `<button class="btn btn-primary report-issue-btn" data-code="${a.assetCode}" data-name="${a.name}">
-              Report Issue
-            </button>`
-          : `<a href="../auth/login.html" class="btn btn-secondary" style="width:100%;justify-content:center;text-decoration:none;">
-              Sign in to Report Issue
-            </a>`}
+        ${actionHtml}
       </div>
     `
   }).join('')
@@ -281,6 +300,18 @@ function initReportModal() {
 }
 
 async function openReportModal(assetCode, assetName) {
+  // Check if asset is retired
+  const { data: asset } = await supabase
+    .from('assets')
+    .select('status')
+    .eq('assetCode', assetCode)
+    .maybeSingle()
+
+  if (asset?.status === 'Retired') {
+    showToast('This asset is retired and cannot accept new issues.', 'error')
+    return
+  }
+
   document.getElementById('report-asset-display').value = `${assetName} (Code: ${assetCode})`
   document.getElementById('report-asset-display').dataset.assetCode = assetCode
   document.getElementById('report-title').value = ''
@@ -328,6 +359,18 @@ async function handleSubmitReport() {
   submitBtn.disabled = true
 
   try {
+    // Safety check: verify asset is not retired
+    const { data: currentAsset } = await supabase
+      .from('assets')
+      .select('status')
+      .eq('assetCode', assetCode)
+      .maybeSingle()
+
+    if (currentAsset?.status === 'Retired') {
+      showToast('This asset is retired and cannot accept new issues.', 'error')
+      return
+    }
+
     const { error } = await supabase
       .from('issues')
       .insert({
@@ -341,10 +384,11 @@ async function handleSubmitReport() {
 
     if (error) throw error
 
-    // Update asset status to "Issue Reported"
+    // Update asset status — Critical issues set to Out of Service
+    const newAssetStatus = priority === 'Critical' ? 'Out of Service' : 'Issue Reported'
     await supabase
       .from('assets')
-      .update({ status: 'Issue Reported' })
+      .update({ status: newAssetStatus })
       .eq('assetCode', assetCode)
 
     // Log history
