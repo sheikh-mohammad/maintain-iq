@@ -58,7 +58,7 @@ Every asset gets a unique QR code. Anyone in the facility can scan it, land on a
 | **Public / Reporter** | Browse all registered assets; scan QR codes to land on a specific asset's detail page; sign in to report issues on any asset |
 
 **How authentication works:**
-- **Admin** — identified by the email `admin@admin.com` after signing in via Supabase Auth
+- **Admin** — identified by the admin email configured in `js/auth/auth.js` after signing in via Supabase Auth
 - **Technicians** — stored in a dedicated `technicians` table; login checks this table first (email + password) before falling back to Supabase Auth, creating a local session (`maintainiq-tech-session`) in localStorage
 - **Regular users** — sign up via Supabase Auth and land on the home page after login
 
@@ -172,8 +172,6 @@ The admin **History** page displays a chronologically sorted, colour-coded timel
 ```
 maintain-iq/
 ├── index.html                          # Landing / marketing homepage
-├── config.example.js                   # Local dev template — copy to config.js (gitignored)
-├── vercel.json                         # Legacy build config; Cloudflare Pages settings control builds
 ├── pages/
 │   ├── auth/
 │   │   ├── login.html                  # Sign-in page
@@ -203,9 +201,6 @@ maintain-iq/
 ├── js/
 │   ├── app.js                          # Landing page interactivity + theme toggle
 │   ├── index.js                        # Landing page secondary initialisations
-│   ├── config/
-│   │   ├── config.js                   # Re-exports runtime globals (window.PROJECT_URL, …)
-│   │   └── example.config.js           # Pointer to the root config.example.js flow
 │   ├── auth/
 │   │   ├── auth.js                     # Core module: Supabase client, session, toasts,
 │   │   │                               #   route guards, navbar/drawer user menu, history helper
@@ -253,30 +248,21 @@ You need your own Supabase project for the backend:
 1. Create a project at [supabase.com](https://supabase.com)
 2. Set up the database tables listed in the [Database Schema](#database-schema) section below
 3. Create a public storage bucket named `maintenance-evidence`
-4. Add these **Cloudflare Pages environment variables** (Project → Settings → Environment Variables, for both Production and Preview):
-   - `PROJECT_URL` — your Supabase project URL (e.g. `https://your-project-id.supabase.co`)
-   - `PUBLISH_KEY` — your Supabase publishable key
-   - `ADMIN_EMAIL` — the email that identifies the admin account (see step 3)
+4. Set the project URL, publishable key, and admin email at the top of `js/auth/auth.js`
 
-On Cloudflare Pages, configure the build command to read these variables and generate `/config.js` at deploy time, so **no credentials are committed to this repo** — the real values never appear in the source code.
+The browser only uses the public Supabase publishable key. Never place a service-role key in frontend code.
 
 ### 3. Seed an admin account
 
 In your Supabase dashboard, under **Authentication > Users**, create a user with:
-- **Email:** the email you set as `ADMIN_EMAIL` (e.g. `admin@admin.com`)
+- **Email:** the admin email configured in `js/auth/auth.js` (e.g. `admin@admin.com`)
 - **Password:** (your chosen password)
 
 The app identifies administrators by this exact email address.
 
 ### 4. Serve the site
 
-**Local config:** for local development, copy `config.example.js` to `config.js` in the project root and fill in your real values (that file is gitignored, so it won't be committed):
-
-```bash
-cp config.example.js config.js
-```
-
-Since this project uses ES modules (`type="module"`), it **must** be served via an HTTP server — opening `index.html` from the filesystem (`file://`) will fail with CORS errors.
+There is no build step or runtime config file. Since this project uses ES modules (`type="module"`), it **must** be served via an HTTP server — opening `index.html` from the filesystem (`file://`) will fail with CORS errors.
 
 ```bash
 # Python
@@ -297,7 +283,7 @@ The project is live at **[maintain-iq.pages.dev](https://maintain-iq.pages.dev/)
 | Landing page | `http://localhost:5500` |
 | Sign In | `http://localhost:5500/pages/auth/login.html` |
 | Sign Up | `http://localhost:5500/pages/auth/signup.html` |
-| Admin Dashboard | Sign in as your `ADMIN_EMAIL` — redirects automatically |
+| Admin Dashboard | Sign in as the admin email configured in `js/auth/auth.js` — redirects automatically |
 | Public Assets | `http://localhost:5500/pages/public/assets.html` |
 | QR Scan Link | `http://localhost:5500/pages/public/assets.html#<assetCode>` |
 
@@ -427,7 +413,7 @@ Handles all landing page interactivity:
 ### `js/auth/auth.js` — Shared Core Module
 
 Loaded on every page. Responsibilities:
-- Initialises the Supabase client from config
+- Initialises the Supabase client with the public project settings
 - Fetches the session on `DOMContentLoaded` and updates the navbar, mobile drawer, admin topbar, and assets page button
 - **Three session sources:** Supabase Auth session → `maintainiq-user` cache → `maintainiq-tech-session` (technician)
 - Provides `signOutUser()` — clears all localStorage keys matching `sb-*`, the user cache, and the tech session
