@@ -1,7 +1,2 @@
-# config.js (project root) is generated at deploy time by the Cloudflare Pages
-# build command configured in the project settings from the PROJECT_URL /
-# PUBLISH_KEY / ADMIN_EMAIL env vars. It is never committed.
-/config.js
-
 # Local Node tooling (not required by this project)
 node_modules/
