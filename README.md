@@ -23,7 +23,7 @@
 </p>
 
 <p align="center">
-  <strong>🔗 <a href="https://maintain-iq-smit.vercel.app/">maintain-iq-smit.vercel.app</a></strong>
+  <strong>🔗 <a href="https://maintain-iq.pages.dev/">maintain-iq.pages.dev</a></strong>
 </p>
 
 <p align="center">
@@ -290,7 +290,7 @@ npx serve .
 
 ### 5. Access the app
 
-The project is live at **[maintain-iq-smit.vercel.app](https://maintain-iq-smit.vercel.app/)**. For local development:
+The project is live at **[maintain-iq.pages.dev](https://maintain-iq.pages.dev/)**. For local development:
 
 | Page | URL |
 |------|-----|
