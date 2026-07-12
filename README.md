@@ -19,7 +19,7 @@
   <img src="https://img.shields.io/badge/JavaScript-F7DF1E?logo=javascript&logoColor=000" alt="JavaScript">
   <img src="https://img.shields.io/badge/Supabase-3FCF8E?logo=supabase&logoColor=fff" alt="Supabase">
   <img src="https://img.shields.io/badge/Chart.js-FF6384?logo=chart.js&logoColor=fff" alt="Chart.js">
-  <img src="https://img.shields.io/badge/Vercel-000000?logo=vercel&logoColor=fff" alt="Vercel">
+  <img src="https://img.shields.io/badge/Cloudflare-F38020?logo=cloudflare&logoColor=fff" alt="Cloudflare">
 </p>
 
 <p align="center">
@@ -173,7 +173,7 @@ The admin **History** page displays a chronologically sorted, colour-coded timel
 maintain-iq/
 ├── index.html                          # Landing / marketing homepage
 ├── config.example.js                   # Local dev template — copy to config.js (gitignored)
-├── vercel.json                         # Build command injects env vars into /config.js
+├── vercel.json                         # Legacy build config; Cloudflare Pages settings control builds
 ├── pages/
 │   ├── auth/
 │   │   ├── login.html                  # Sign-in page
@@ -233,7 +233,7 @@ maintain-iq/
 | **Backend & Database** | [Supabase](https://supabase.com/) — Postgres database, Auth (email/password), Storage |
 | **Charts** | [Chart.js 4](https://www.chartjs.org/) |
 | **QR Codes** | [QRCode.js](https://github.com/davidshimjs/qrcodejs) |
-| **Deployment** | Static host — all pages are plain `.html` files with client-side Supabase interaction |
+| **Deployment** | Cloudflare Pages — all pages are plain `.html` files with client-side Supabase interaction |
 
 ---
 
@@ -253,12 +253,12 @@ You need your own Supabase project for the backend:
 1. Create a project at [supabase.com](https://supabase.com)
 2. Set up the database tables listed in the [Database Schema](#database-schema) section below
 3. Create a public storage bucket named `maintenance-evidence`
-4. Add these **Vercel environment variables** (Project → Settings → Environment Variables, for both Production and Preview):
+4. Add these **Cloudflare Pages environment variables** (Project → Settings → Environment Variables, for both Production and Preview):
    - `PROJECT_URL` — your Supabase project URL (e.g. `https://your-project-id.supabase.co`)
    - `PUBLISH_KEY` — your Supabase publishable key
    - `ADMIN_EMAIL` — the email that identifies the admin account (see step 3)
 
-On Vercel, the build command in `vercel.json` reads these variables and generates `/config.js` at deploy time, so **no credentials are committed to this repo** — the real values never appear in the source code.
+On Cloudflare Pages, configure the build command to read these variables and generate `/config.js` at deploy time, so **no credentials are committed to this repo** — the real values never appear in the source code.
 
 ### 3. Seed an admin account
 

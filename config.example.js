@@ -1,8 +1,8 @@
 /* ==========================================================================
    Local development config template.
 
-   On Vercel, this file is generated at deploy time by the build command in
-   vercel.json from the PROJECT_URL / PUBLISH_KEY / ADMIN_EMAIL env vars, so
+   In production, this file is generated at deploy time by the configured
+   build command from the PROJECT_URL / PUBLISH_KEY / ADMIN_EMAIL env vars, so
    the real values never appear in this repo.
 
    For LOCAL development only: copy this file to config.js (gitignored) and
