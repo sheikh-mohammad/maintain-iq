@@ -450,6 +450,18 @@
 /* ===== Responsive ===== */
 
 @media (max-width: 768px) {
+  .public-assets-section {
+    padding: 5rem 0 3rem;
+  }
+
+  .public-assets-header h1 {
+    font-size: 1.75rem;
+  }
+
+  .public-assets-header {
+    margin-bottom: 2rem;
+  }
+
   .asset-detail-meta {
     grid-template-columns: 1fr 1fr;
     gap: 0.75rem;
@@ -460,6 +472,16 @@
   }
   .asset-detail-history {
     padding: 0 0.5rem;
+  }
+
+  .modal-footer {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .modal-footer .btn {
+    width: 100%;
+    justify-content: center;
   }
 }
 
@@ -475,5 +497,52 @@
   }
   .asset-detail-header h2 {
     font-size: 1.25rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .public-assets-section {
+    padding: 4rem 0 2rem;
+  }
+
+  .public-assets-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .public-assets-header p {
+    font-size: 0.875rem;
+  }
+
+  .public-asset-card {
+    padding: 1rem;
+  }
+
+  .public-asset-info h3 {
+    font-size: 1rem;
+  }
+
+  .asset-detail-card {
+    padding: 1rem;
+    border-radius: 12px;
+  }
+
+  .asset-detail-header h2 {
+    font-size: 1.125rem;
+  }
+
+  .asset-detail-qr-section {
+    padding: 1rem;
+  }
+
+  .modal-body {
+    padding: 1rem;
+  }
+
+  .modal-header {
+    padding: 0.875rem 1rem;
+  }
+
+  .modal-header h3 {
+    font-size: 1rem;
   }
 }

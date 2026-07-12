@@ -70,6 +70,12 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Responsive media */
+img, video, canvas, svg {
+  max-width: 100%;
+  height: auto;
+}
+
 /* Sleek Scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
@@ -518,6 +524,10 @@ p {
 .mobile-drawer-link:hover {
   color: var(--accent-emerald);
   transform: translateX(4px);
+}
+
+.mobile-drawer-link.active {
+  color: var(--accent-emerald);
 }
 
 .mobile-drawer-actions {
@@ -2020,12 +2030,16 @@ p {
    ========================================================================== */
 @media (max-width: 1024px) {
   section {
-    padding: 6rem 0;
+    padding: 5rem 0;
+  }
+
+  .container {
+    padding: 0 1.5rem;
   }
 
   .hero .container {
     grid-template-columns: 1fr;
-    gap: 3.5rem;
+    gap: 3rem;
     text-align: center;
   }
 
@@ -2068,7 +2082,11 @@ p {
 
   .why-container {
     grid-template-columns: 1fr;
-    gap: 3.5rem;
+    gap: 3rem;
+  }
+
+  .why-container h2 {
+    font-size: 2.25rem;
   }
 
   .testimonials-grid {
@@ -2088,11 +2106,67 @@ p {
   .features-grid {
     grid-template-columns: repeat(2, 1fr);
   }
+
+  /* Pricing grid: 2 cols on tablet */
+  .pricing-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+
+  .pricing-card:last-child {
+    grid-column: span 2;
+    max-width: 50%;
+    margin: 0 auto;
+  }
+
+  /* Analytics grid: 2 cols on tablet */
+  .analytics-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  /* Workflow: 4 cols at 1024px (was 8) */
+  .workflow-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+  }
+
+  .workflow-timeline-line,
+  .workflow-timeline-progress {
+    display: none;
+  }
+
+  /* Mockup content grid: 1 col on tablet */
+  .mockup-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .section-header h2 {
+    font-size: 2.25rem;
+  }
+
+  .cta-box h2 {
+    font-size: 2.5rem;
+  }
 }
 
 @media (max-width: 768px) {
-  .nav-links, .nav-actions .btn-secondary {
+  section {
+    padding: 4rem 0;
+  }
+
+  .container {
+    padding: 0 1.25rem;
+  }
+
+  /* Hide all nav links and nav action buttons on mobile,
+     only keep theme toggle and hamburger */
+  .nav-links,
+  .nav-actions .btn {
     display: none;
+  }
+
+  .nav-actions .theme-toggle {
+    display: flex;
   }
 
   .mobile-menu-toggle {
@@ -2100,11 +2174,12 @@ p {
   }
 
   .hero {
-    padding: 4rem 0 3rem;
+    padding-top: calc(var(--header-height) + 2rem);
+    padding-bottom: 2rem;
   }
 
   .hero h1 {
-    font-size: 2.25rem;
+    font-size: 2rem;
   }
 
   .hero h1 span.gradient-text-full {
@@ -2132,6 +2207,10 @@ p {
     justify-content: center;
   }
 
+  .section-header {
+    margin-bottom: 3rem;
+  }
+
   .section-header h2 {
     font-size: 1.75rem;
   }
@@ -2150,7 +2229,7 @@ p {
 
   .workflow-grid {
     grid-template-columns: repeat(4, 1fr);
-    gap: 1.5rem;
+    gap: 1rem;
   }
 
   .workflow-timeline-line, .workflow-timeline-progress {
@@ -2204,6 +2283,24 @@ p {
     padding: 2.5rem 1.5rem;
   }
 
+  /* Pricing grid: 1 column on mobile */
+  .pricing-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    max-width: 420px;
+    margin: 0 auto;
+  }
+
+  .pricing-card:last-child {
+    grid-column: span 1;
+    max-width: 100%;
+  }
+
+  /* Analytics grid: 1 column on mobile */
+  .analytics-grid {
+    grid-template-columns: 1fr;
+  }
+
   /* Hero preview cards */
   .floating-overlay-card {
     display: none;
@@ -2251,9 +2348,87 @@ p {
     padding: 0.5rem 0.75rem;
     white-space: nowrap;
   }
+
+  .browser-address {
+    display: none;
+  }
+
+  .browser-header {
+    padding: 0.75rem 1rem;
+  }
+
+  /* Toast on mobile: full width */
+  .toast-container {
+    top: 1rem;
+    right: 1rem;
+    left: 1rem;
+  }
+
+  .toast {
+    max-width: 100%;
+    width: 100%;
+  }
+}
+
+@media (max-width: 640px) {
+  section {
+    padding: 3.5rem 0;
+  }
+
+  .container {
+    padding: 0 1.25rem;
+  }
+
+  .hero h1 {
+    font-size: 1.85rem;
+  }
+
+  .hero-actions {
+    flex-direction: column;
+    width: 100%;
+    max-width: 300px;
+  }
+
+  .hero-actions .btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .pricing-grid {
+    grid-template-columns: 1fr;
+    max-width: 420px;
+    margin: 0 auto;
+  }
+
+  .pricing-card:last-child {
+    grid-column: span 1;
+    max-width: 100%;
+  }
+
+  .workflow-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+
+  .mobile-drawer {
+    width: 300px;
+    right: -300px;
+  }
+
+  .cta-box h2 {
+    font-size: 1.5rem;
+  }
 }
 
 @media (max-width: 480px) {
+  section {
+    padding: 3rem 0;
+  }
+
+  .container {
+    padding: 0 1rem;
+  }
+
   .hero h1 {
     font-size: 1.75rem;
   }
@@ -2282,8 +2457,22 @@ p {
     font-size: 0.875rem;
   }
 
+  .cta-box {
+    padding: 2rem 1.25rem;
+    border-radius: 20px;
+  }
+
+  .cta-box h2 {
+    font-size: 1.5rem;
+  }
+
   .cta-actions {
     flex-direction: column;
+  }
+
+  .cta-actions .btn {
+    width: 100%;
+    justify-content: center;
   }
 
   .footer-grid {
@@ -2301,5 +2490,33 @@ p {
 
   .logos-strip-title {
     font-size: 0.8rem;
+  }
+
+  .stats-grid {
+    gap: 1.5rem;
+  }
+
+  .stat-number {
+    font-size: 2.5rem;
+  }
+
+  .footer-bottom {
+    flex-direction: column;
+    gap: 0.75rem;
+    text-align: center;
+  }
+
+  .mobile-drawer {
+    width: 280px;
+    right: -280px;
+  }
+
+  .issue-item-card {
+    grid-template-columns: 1fr;
+  }
+
+  .analytics-chart-mockup {
+    height: 150px;
+    padding: 1rem;
   }
 }

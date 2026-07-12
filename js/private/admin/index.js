@@ -49,17 +49,33 @@ function initSidebarNavigation() {
   })
 }
 
-/* --- Sidebar Toggle (mobile) --- */
+/* --- Sidebar Toggle --- */
 function initSidebarToggle() {
   const toggleBtn = document.getElementById('mobile-sidebar-toggle')
+  const collapseBtn = document.getElementById('sidebar-collapse')
   const sidebar = document.getElementById('admin-sidebar')
-  if (!toggleBtn || !sidebar) return
+  if (!sidebar) return
 
-  toggleBtn.addEventListener('click', () => sidebar.classList.toggle('open'))
+  // Mobile: show/hide sidebar
+  if (toggleBtn) {
+    toggleBtn.addEventListener('click', () => sidebar.classList.toggle('open'))
+  }
 
+  // Desktop: expand/collapse
+  if (collapseBtn) {
+    collapseBtn.addEventListener('click', () => {
+      sidebar.classList.toggle('collapsed')
+      // On mobile, also show sidebar when expanding
+      if (window.innerWidth <= 768 && !sidebar.classList.contains('open')) {
+        sidebar.classList.add('open')
+      }
+    })
+  }
+
+  // Click outside to close on mobile
   document.addEventListener('click', e => {
     if (window.innerWidth <= 768 && sidebar.classList.contains('open')) {
-      if (!sidebar.contains(e.target) && !toggleBtn.contains(e.target)) {
+      if (!sidebar.contains(e.target) && !toggleBtn?.contains(e.target)) {
         sidebar.classList.remove('open')
       }
     }
@@ -144,7 +160,7 @@ async function loadAssets() {
     .order('created_at', { ascending: false })
 
   if (!assets || assets.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="6" class="table-empty">No assets registered. Click "Create Asset" to add one.</td></tr>`
+    tbody.innerHTML = `<tr><td colspan="7" class="table-empty">No assets registered. Click "Create Asset" to add one.</td></tr>`
     return
   }
 
@@ -164,9 +180,9 @@ async function loadAssets() {
       <td>
         <div class="asset-name-cell">
           <span>${a.name}</span>
-          <label>${a.assetCode}</label>
         </div>
       </td>
+      <td><code style="font-size:0.8125rem;color:var(--text-gray-500);background:var(--bg-tertiary);padding:0.2rem 0.4rem;border-radius:4px;">${a.assetCode}</code></td>
       <td>${a.category}</td>
       <td>${a.location}</td>
       <td><span class="badge ${statusClass}">${a.status}</span></td>
@@ -204,7 +220,7 @@ async function loadAssets() {
       const newStatus = select.value
       if (!newStatus) return
 
-      const assetCode = select.dataset.code
+      const assetCode = Number(select.dataset.code)
       const oldStatus = select.dataset.current
 
       const { error } = await supabase

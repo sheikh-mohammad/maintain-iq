@@ -32,6 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initSidebarToggle()
   initLogout()
   loadTechIssues()
+  loadTechAssets()
   loadMaintenanceDropdown()
   initMaintenanceForm()
 })
@@ -59,6 +60,11 @@ function initSidebarNavigation() {
         if (pageTitle) pageTitle.textContent = link.querySelector('span').textContent
       }
 
+      // Lazy load assets data when navigating to assets page
+      if (pageId === 'assets') {
+        loadTechAssets()
+      }
+
       // Close sidebar on mobile
       const sidebar = document.getElementById('tech-sidebar')
       if (window.innerWidth <= 768) {
@@ -72,17 +78,30 @@ function initSidebarNavigation() {
 
 function initSidebarToggle() {
   const toggleBtn = document.getElementById('tech-mobile-toggle')
+  const collapseBtn = document.getElementById('tech-sidebar-collapse')
   const sidebar = document.getElementById('tech-sidebar')
+  if (!sidebar) return
 
-  if (!toggleBtn || !sidebar) return
+  // Mobile: show/hide sidebar
+  if (toggleBtn) {
+    toggleBtn.addEventListener('click', () => {
+      sidebar.classList.toggle('open')
+    })
+  }
 
-  toggleBtn.addEventListener('click', () => {
-    sidebar.classList.toggle('open')
-  })
+  // Desktop: expand/collapse
+  if (collapseBtn) {
+    collapseBtn.addEventListener('click', () => {
+      sidebar.classList.toggle('collapsed')
+      if (window.innerWidth <= 768 && !sidebar.classList.contains('open')) {
+        sidebar.classList.add('open')
+      }
+    })
+  }
 
   document.addEventListener('click', e => {
     if (window.innerWidth <= 768 && sidebar.classList.contains('open')) {
-      if (!sidebar.contains(e.target) && !toggleBtn.contains(e.target)) {
+      if (!sidebar.contains(e.target) && !toggleBtn?.contains(e.target)) {
         sidebar.classList.remove('open')
       }
     }
@@ -141,6 +160,42 @@ async function loadTechIssues() {
         <td>—</td>
       </tr>
     `
+  }).join('')
+}
+
+/* --- Load Assets --- */
+
+async function loadTechAssets() {
+  const tbody = document.getElementById('tech-assets-body')
+  if (!tbody) return
+
+  const { data: assets } = await supabase
+    .from('assets')
+    .select('*')
+    .order('created_at', { ascending: false })
+
+  if (!assets || assets.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="5" class="tech-table-empty">No assets found.</td></tr>`
+    return
+  }
+
+  tbody.innerHTML = assets.map(a => {
+    const statusClass = a.status === 'Operational' ? 'badge-emerald'
+      : a.status === 'Issue Reported' ? 'badge-orange'
+      : a.status === 'Under Inspection' ? 'badge-blue'
+      : a.status === 'Under Maintenance' ? 'badge-purple'
+      : a.status === 'Out of Service' ? 'badge-red'
+      : a.status === 'Retired' ? 'badge-red'
+      : 'badge-orange'
+
+    return `
+    <tr>
+      <td>${a.name}</td>
+      <td>${a.assetCode}</td>
+      <td>${a.category || '—'}</td>
+      <td>${a.location || '—'}</td>
+      <td><span class="badge ${statusClass}">${a.status}</span></td>
+    </tr>`
   }).join('')
 }
 

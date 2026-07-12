@@ -416,3 +416,27 @@ html.theme-transitioning *::after {
 [data-theme="light"] .popular-badge {
   color: #ffffff;
 }
+
+/* --- Responsive: shared components --- */
+
+@media (max-width: 640px) {
+  .user-dropdown {
+    min-width: 160px;
+    right: 0;
+    left: auto;
+  }
+
+  .user-name {
+    max-width: 80px;
+  }
+
+  .toast-container {
+    top: 1rem;
+    right: 1rem;
+    left: 1rem;
+  }
+
+  .toast {
+    max-width: 100%;
+  }
+}

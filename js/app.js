@@ -4,6 +4,7 @@
 
 document.addEventListener('DOMContentLoaded', () => {
   initStickyNavbar();
+  initMobileDrawer();
   initHeroPreviewHover();
   initDashboardMockupTabs();
   initStatsCounter();
@@ -29,7 +30,39 @@ function initStickyNavbar() {
   handleScroll();
 }
 
-/* --- 2. Hero Interactive Hover Effects --- */
+/* --- 2. Mobile Drawer Toggle --- */
+function initMobileDrawer() {
+  const toggleBtn = document.getElementById('mobile-menu-toggle');
+  const closeBtn = document.getElementById('mobile-menu-close');
+  const drawer = document.getElementById('mobile-drawer');
+  const overlay = document.getElementById('mobile-drawer-overlay');
+  const drawerLinks = document.querySelectorAll('.mobile-drawer-link');
+  if (!toggleBtn || !drawer || !overlay) return;
+
+  const openDrawer = () => {
+    drawer.classList.add('active');
+    overlay.classList.add('active');
+    toggleBtn.setAttribute('aria-expanded', 'true');
+    document.body.style.overflow = 'hidden';
+  };
+
+  const closeDrawer = () => {
+    drawer.classList.remove('active');
+    overlay.classList.remove('active');
+    toggleBtn.setAttribute('aria-expanded', 'false');
+    document.body.style.overflow = '';
+  };
+
+  toggleBtn.addEventListener('click', openDrawer);
+  closeBtn?.addEventListener('click', closeDrawer);
+  overlay.addEventListener('click', closeDrawer);
+  drawerLinks.forEach(link => { link.addEventListener('click', closeDrawer); });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && drawer.classList.contains('active')) closeDrawer();
+  });
+}
+
+/* --- 3. Hero Interactive Hover Effects --- */
 function initHeroPreviewHover() {
   const previewWrapper = document.getElementById('hero-preview-wrapper');
   if (!previewWrapper) return;

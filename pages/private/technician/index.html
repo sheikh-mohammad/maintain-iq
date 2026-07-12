@@ -16,12 +16,17 @@
       <!-- Sidebar -->
       <aside class="tech-sidebar" id="tech-sidebar">
         <div class="tech-sidebar-header">
-          <a href="../../../index.html" class="tech-sidebar-logo">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 20px; height: 20px;">
-              <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
-            </svg>
-            <span>MaintainIQ</span>
-          </a>
+          <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+            <a href="../../../index.html" class="tech-sidebar-logo">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 20px; height: 20px;">
+                <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+              </svg>
+              <span>MaintainIQ</span>
+            </a>
+            <button class="tech-sidebar-collapse-btn" id="tech-sidebar-collapse" aria-label="Collapse sidebar">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 18px; height: 18px;"><path d="M15 18l-6-6 6-6"></path></svg>
+            </button>
+          </div>
           <span class="tech-sidebar-badge">Technician</span>
         </div>
 
@@ -31,6 +36,12 @@
               <a href="#" class="tech-sidebar-link active" data-page="dashboard">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1"></rect><rect x="14" y="3" width="7" height="5" rx="1"></rect><rect x="14" y="12" width="7" height="9" rx="1"></rect><rect x="3" y="16" width="7" height="5" rx="1"></rect></svg>
                 <span>Dashboard</span>
+              </a>
+            </li>
+            <li>
+              <a href="#" class="tech-sidebar-link" data-page="assets">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect><rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect><line x1="6" y1="6" x2="6.01" y2="6"></line><line x1="6" y1="18" x2="6.01" y2="18"></line></svg>
+                <span>Assets</span>
               </a>
             </li>
             <li>
@@ -132,6 +143,34 @@
             </div>
             <div class="tech-empty-section">
               <p>No issues assigned to you yet. When an admin assigns an issue, it will appear here.</p>
+            </div>
+          </section>
+
+          <!-- ===== ASSETS ===== -->
+          <section class="tech-page" id="tech-page-assets">
+            <div class="tech-page-header">
+              <h3>Assets</h3>
+              <p>View and search all registered assets.</p>
+            </div>
+            <div class="tech-table-card">
+              <div class="tech-table-wrapper">
+                <table class="tech-table">
+                  <thead>
+                    <tr>
+                      <th>Asset Name</th>
+                      <th>Code</th>
+                      <th>Category</th>
+                      <th>Location</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tech-assets-body">
+                    <tr>
+                      <td colspan="5" class="tech-table-empty">No assets found.</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
             </div>
           </section>
 
