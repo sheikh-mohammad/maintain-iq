@@ -560,7 +560,7 @@ function openMaintenanceDetail(record) {
         <button class="modal-close-btn" style="background:none;border:none;color:var(--text-gray-400);font-size:1.5rem;cursor:pointer;">&times;</button>
       </div>
       <div class="modal-body">
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.5rem;">
+        <div class="maintenance-detail-grid">
           <div>
             <label style="font-size:0.75rem;text-transform:uppercase;color:var(--text-gray-500);font-weight:600;">Asset</label>
             <p style="margin:0.2rem 0;color:var(--text-white);">${record.asset_id}</p>

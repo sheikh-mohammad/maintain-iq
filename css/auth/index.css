@@ -132,9 +132,8 @@
 
 @media (max-width: 480px) {
   .auth-layout {
-    padding: 1rem 0.75rem;
-    align-items: flex-start;
-    padding-top: 2rem;
+    padding: 2rem 0.75rem;
+    align-items: center;
   }
 
   .auth-card {
@@ -159,12 +158,12 @@
   }
 
   .auth-form .form-input {
-    padding: 0.625rem 0.875rem;
-    font-size: 0.875rem;
+    padding: 0.75rem 1rem;
+    font-size: 0.9375rem;
   }
 
   .auth-submit {
-    padding: 0.75rem;
+    padding: 0.875rem;
     font-size: 0.9375rem;
   }
 

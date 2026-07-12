@@ -418,6 +418,8 @@ p {
   border: none;
   color: var(--text-white);
   cursor: pointer;
+  min-width: 44px;
+  min-height: 44px;
   padding: 0.25rem;
   border-radius: 6px;
   align-items: center;
@@ -483,6 +485,8 @@ p {
   border: none;
   color: var(--text-gray-400);
   cursor: pointer;
+  min-width: 44px;
+  min-height: 44px;
   padding: 0.25rem;
   border-radius: 6px;
   display: flex;
@@ -1203,6 +1207,7 @@ p {
 .mockup-content {
   padding: 2rem;
   display: none;
+  overflow-x: auto;
   animation: fadeIn 0.3s ease forwards;
 }
 
@@ -1233,6 +1238,7 @@ p {
   border: 1px solid var(--border-subtle);
   border-radius: 12px;
   overflow: hidden;
+  min-width: 420px;
 }
 
 .table-header {
@@ -1935,8 +1941,8 @@ p {
 }
 
 .footer-social-link {
-  width: 36px;
-  height: 36px;
+  width: 44px;
+  height: 44px;
   border-radius: 8px;
   background: var(--bg-secondary);
   border: 1px solid var(--border-light);
@@ -2486,6 +2492,14 @@ p {
 
   .logo-item {
     flex: 0 0 calc(50% - 0.75rem);
+    font-size: 0.9rem;
+  }
+
+  .logo-item span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-width: 0;
   }
 
   .logos-strip-title {

@@ -768,6 +768,22 @@ select.form-input {
   font-weight: 500;
 }
 
+/* --- Maintenance Detail Modal Grid --- */
+
+.maintenance-detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+@media (max-width: 480px) {
+  .maintenance-detail-grid {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+}
+
 /* --- Empty State --- */
 
 .history-empty {
@@ -902,9 +918,23 @@ select.form-input {
   .stat-card-value {
     font-size: 1.35rem;
   }
-}
+
+  /* Maintenance records: hide Date Completed column */
+  #page-maintenance .admin-table th:nth-child(4),
+  #page-maintenance .admin-table td:nth-child(4) {
+    display: none;
+  }
+
 
 @media (max-width: 480px) {
+  /* Maintenance records: hide Technician and Cost columns */
+  #page-maintenance .admin-table th:nth-child(3),
+  #page-maintenance .admin-table td:nth-child(3),
+  #page-maintenance .admin-table th:nth-child(5),
+  #page-maintenance .admin-table td:nth-child(5) {
+    display: none;
+  }
+
   .admin-content {
     padding: 1rem 0.75rem;
   }
