@@ -348,6 +348,10 @@
 .admin-table-toolbar {
   padding: 1rem 1.25rem;
   border-bottom: 1px solid var(--border-subtle);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
 }
 
 .admin-search-input {
@@ -362,6 +366,7 @@
   font-family: var(--font-sans);
   outline: none;
   transition: border-color var(--transition-fast);
+  box-sizing: border-box;
 }
 
 .admin-search-input:focus {
@@ -370,6 +375,56 @@
 
 .admin-search-input::placeholder {
   color: var(--text-gray-500);
+}
+
+/* Filter dropdowns in toolbar */
+.admin-filter-select {
+  padding: 0.5rem 2rem 0.5rem 0.75rem;
+  font-size: 0.8125rem;
+  border-radius: 8px;
+  border: 1px solid var(--border-light);
+  background: var(--bg-tertiary);
+  color: var(--text-gray-300);
+  font-family: var(--font-sans);
+  cursor: pointer;
+  outline: none;
+  min-width: 130px;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23a1a1aa' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.5rem center;
+  background-size: 14px;
+  transition: border-color var(--transition-fast);
+}
+
+.admin-filter-select:hover {
+  border-color: var(--border-active);
+}
+
+.admin-filter-select:focus {
+  border-color: var(--accent-emerald);
+}
+
+.admin-filter-select option {
+  background: var(--bg-secondary);
+  color: var(--text-gray-300);
+}
+
+/* Narrow screens: filter dropdowns stack */
+@media (max-width: 640px) {
+  .admin-table-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .admin-search-input {
+    max-width: 100%;
+  }
+
+  .admin-filter-select {
+    min-width: 0;
+    width: 100%;
+  }
 }
 
 .admin-table-wrapper {

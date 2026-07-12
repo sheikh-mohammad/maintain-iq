@@ -149,6 +149,26 @@
               <p>Issues assigned to you for inspection and maintenance.</p>
             </div>
             <div class="tech-table-card">
+              <div class="tech-table-toolbar">
+                <input type="text" class="tech-search-input" placeholder="Search issues..." id="tech-issue-search" />
+                <select class="tech-filter-select" id="tech-filter-status">
+                  <option value="">All Statuses</option>
+                  <option value="Reported">Reported</option>
+                  <option value="Assigned">Assigned</option>
+                  <option value="Inspection Started">Inspection Started</option>
+                  <option value="Maintenance In Progress">Maintenance In Progress</option>
+                  <option value="Waiting for Parts">Waiting for Parts</option>
+                  <option value="Resolved">Resolved</option>
+                  <option value="Closed">Closed</option>
+                </select>
+                <select class="tech-filter-select" id="tech-filter-priority">
+                  <option value="">All Priorities</option>
+                  <option value="Critical">Critical</option>
+                  <option value="High">High</option>
+                  <option value="Medium">Medium</option>
+                  <option value="Low">Low</option>
+                </select>
+              </div>
               <div class="tech-table-wrapper">
                 <table class="tech-table">
                   <thead>

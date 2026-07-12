@@ -262,6 +262,27 @@
             <div class="admin-table-card">
               <div class="admin-table-toolbar">
                 <input type="text" class="admin-search-input" placeholder="Search assets..." id="asset-search" />
+                <select class="admin-filter-select" data-filter="assets" data-column="status">
+                  <option value="">All Statuses</option>
+                  <option value="Operational">Operational</option>
+                  <option value="Issue Reported">Issue Reported</option>
+                  <option value="Under Inspection">Under Inspection</option>
+                  <option value="Under Maintenance">Under Maintenance</option>
+                  <option value="Out of Service">Out of Service</option>
+                  <option value="Retired">Retired</option>
+                </select>
+                <select class="admin-filter-select" data-filter="assets" data-column="category">
+                  <option value="">All Categories</option>
+                  <option value="AV Equipment">AV Equipment</option>
+                  <option value="HVAC">HVAC</option>
+                  <option value="Plumbing">Plumbing</option>
+                  <option value="Electrical">Electrical</option>
+                  <option value="Furniture">Furniture</option>
+                  <option value="Other">Other</option>
+                </select>
+                <select class="admin-filter-select" data-filter="assets" data-column="location">
+                  <option value="">All Locations</option>
+                </select>
               </div>
               <div class="admin-table-wrapper">
                 <table class="admin-table">
@@ -298,6 +319,26 @@
             <div class="admin-table-card">
               <div class="admin-table-toolbar">
                 <input type="text" class="admin-search-input" placeholder="Search issues..." id="issue-search" />
+                <select class="admin-filter-select" data-filter="issues" data-column="status">
+                  <option value="">All Statuses</option>
+                  <option value="Reported">Reported</option>
+                  <option value="Assigned">Assigned</option>
+                  <option value="Inspection Started">Inspection Started</option>
+                  <option value="Maintenance In Progress">Maintenance In Progress</option>
+                  <option value="Waiting for Parts">Waiting for Parts</option>
+                  <option value="Resolved">Resolved</option>
+                  <option value="Closed">Closed</option>
+                </select>
+                <select class="admin-filter-select" data-filter="issues" data-column="priority">
+                  <option value="">All Priorities</option>
+                  <option value="Critical">Critical</option>
+                  <option value="High">High</option>
+                  <option value="Medium">Medium</option>
+                  <option value="Low">Low</option>
+                </select>
+                <select class="admin-filter-select" data-filter="issues" data-column="technician">
+                  <option value="">All Technicians</option>
+                </select>
               </div>
               <div class="admin-table-wrapper">
                 <table class="admin-table">
@@ -330,6 +371,14 @@
             <div class="admin-table-card">
               <div class="admin-table-toolbar">
                 <input type="text" class="admin-search-input" placeholder="Search technicians..." id="tech-search" />
+                <select class="admin-filter-select" data-filter="techs" data-column="specialty">
+                  <option value="">All Specialties</option>
+                  <option value="Electrical">Electrical</option>
+                  <option value="Plumbing">Plumbing</option>
+                  <option value="HVAC">HVAC</option>
+                  <option value="AV Equipment">AV Equipment</option>
+                  <option value="General">General</option>
+                </select>
               </div>
               <div class="admin-table-wrapper">
                 <table class="admin-table">
@@ -364,6 +413,12 @@
             <div class="admin-table-card">
               <div class="admin-table-toolbar">
                 <input type="text" class="admin-search-input" placeholder="Search records..." id="maintenance-search" />
+                <select class="admin-filter-select" data-filter="maintenance" data-column="status">
+                  <option value="">All Statuses</option>
+                  <option value="Completed">Completed</option>
+                  <option value="In Progress">In Progress</option>
+                  <option value="Cancelled">Cancelled</option>
+                </select>
               </div>
               <div class="admin-table-wrapper">
                 <table class="admin-table">

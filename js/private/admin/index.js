@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   initSidebarToggle()
   initModals()
   initTableActions()
-  initSearch()
+  initSearchAndFilters()
   initCreateTechnician()
   initCreateAsset()
   loadTechnicians()
@@ -22,6 +22,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   loadDashboardStats()
   loadAnalytics()
   loadHistoryLog()
+  populateTechFilter()
 })
 
 /* --- Sidebar Navigation --- */
@@ -240,6 +241,9 @@ async function loadAssets() {
       </td>
     </tr>`
   }).join('')
+
+  // Populate location filter dropdown from loaded data
+  populateLocationFilter(assets)
 
   // Attach QR preview handlers
   tbody.querySelectorAll('.preview-qr-btn').forEach(btn => {
@@ -1197,33 +1201,64 @@ async function loadHistoryLog() {
 }
 
 
+/* --- Populate dynamic filter dropdowns --- */
+
+function populateLocationFilter(assets) {
+  const select = document.querySelector('.admin-filter-select[data-filter="assets"][data-column="location"]')
+  if (!select || !assets) return
+  const locations = [...new Set(assets.map(a => a.location).filter(Boolean))]
+  if (locations.length === 0) return
+  // Keep the "All Locations" option, add unique locations
+  const currentVal = select.value
+  select.innerHTML = '<option value="">All Locations</option>' +
+    locations.sort().map(l => `<option value="${l}">${l}</option>`).join('')
+  select.value = currentVal
+}
+
+function populateTechFilter() {
+  const select = document.querySelector('.admin-filter-select[data-filter="issues"][data-column="technician"]')
+  if (!select) return
+  // Fetch unique technician emails from issues/technicians
+  supabase.from('technicians').select('email, full_name').then(({ data: techs }) => {
+    if (!techs || techs.length === 0) return
+    const currentVal = select.value
+    select.innerHTML = '<option value="">All Technicians</option>' +
+      techs.sort((a, b) => a.full_name.localeCompare(b.full_name))
+        .map(t => `<option value="${t.email}">${t.full_name}</option>`).join('')
+    select.value = currentVal
+  })
+}
+
 /* --- Table Search / Filter --- */
 
-function initSearch() {
-  const searches = [
-    { input: 'asset-search', tbody: 'assets-table-body', colspan: 7 },
-    { input: 'issue-search', tbody: 'issues-table-body', colspan: 6 },
-    { input: 'tech-search', tbody: 'technicians-table-body', colspan: 5 },
-    { input: 'maintenance-search', tbody: 'maintenance-table-body', colspan: 7 },
+function initSearchAndFilters() {
+  const tables = [
+    { input: 'asset-search', tbody: 'assets-table-body', colspan: 7, name: 'assets' },
+    { input: 'issue-search', tbody: 'issues-table-body', colspan: 6, name: 'issues' },
+    { input: 'tech-search', tbody: 'technicians-table-body', colspan: 5, name: 'techs' },
+    { input: 'maintenance-search', tbody: 'maintenance-table-body', colspan: 7, name: 'maintenance' },
   ]
 
-  searches.forEach(({ input: inputId, tbody: tbodyId, colspan }) => {
+  tables.forEach(({ input: inputId, tbody: tbodyId, colspan, name }) => {
     const input = document.getElementById(inputId)
     const tbody = document.getElementById(tbodyId)
     if (!input || !tbody) return
 
-    input.addEventListener('input', () => {
+    // Get filter selects for this table
+    const filterSelects = document.querySelectorAll(`.admin-filter-select[data-filter="${name}"]`)
+
+    function applyFilters() {
       const term = input.value.trim().toLowerCase()
+      const activeFilters = {}
+      filterSelects.forEach(sel => {
+        if (sel.value) activeFilters[sel.dataset.column] = sel.value.toLowerCase()
+      })
+
       const rows = Array.from(tbody.querySelectorAll('tr'))
 
       // Remove any previous "no results" row
       const prevEmpty = tbody.querySelector('tr.empty-search-result')
       if (prevEmpty) prevEmpty.remove()
-
-      if (!term) {
-        rows.forEach(row => { row.style.display = '' })
-        return
-      }
 
       let visibleCount = 0
 
@@ -1233,21 +1268,63 @@ function initSearch() {
           row.style.display = 'none'
           return
         }
-        const text = row.textContent.toLowerCase()
-        if (text.includes(term)) {
-          row.style.display = ''
-          visibleCount++
-        } else {
-          row.style.display = 'none'
+
+        let show = true
+
+        // Text search
+        if (term) {
+          const text = row.textContent.toLowerCase()
+          if (!text.includes(term)) show = false
         }
+
+        // Filter dropdowns — match against specific cell content
+        if (show && Object.keys(activeFilters).length > 0) {
+          const cells = row.querySelectorAll('td')
+          for (const [column, filterValue] of Object.entries(activeFilters)) {
+            let cellText = ''
+            if (column === 'technician') {
+              // Technician is in the 5th cell (index 4)
+              cellText = (cells[4]?.textContent || '').toLowerCase()
+            } else if (column === 'status') {
+              // Status is the badge text in the 4th or 5th cell depending on table
+              // For assets: cell 4; for issues: cell 3; for maintenance: cell 5
+              if (name === 'assets') cellText = (cells[4]?.textContent || '').toLowerCase()
+              else if (name === 'issues') cellText = (cells[3]?.textContent || '').toLowerCase()
+              else if (name === 'maintenance') cellText = (cells[5]?.textContent || '').toLowerCase()
+              else cellText = row.textContent.toLowerCase()
+            } else if (column === 'category') {
+              cellText = (cells[2]?.textContent || '').toLowerCase()
+            } else if (column === 'location') {
+              cellText = (cells[3]?.textContent || '').toLowerCase()
+            } else if (column === 'specialty') {
+              cellText = (cells[1]?.textContent || '').toLowerCase()
+            } else if (column === 'priority') {
+              cellText = (cells[2]?.textContent || '').toLowerCase()
+            } else {
+              cellText = row.textContent.toLowerCase()
+            }
+            if (cellText !== filterValue) { show = false; break }
+          }
+        }
+
+        row.style.display = show ? '' : 'none'
+        if (show) visibleCount++
       })
 
-      if (visibleCount === 0) {
+      if (visibleCount === 0 && (term || Object.keys(activeFilters).length > 0)) {
         const emptyRow = document.createElement('tr')
         emptyRow.className = 'empty-search-result'
-        emptyRow.innerHTML = '<td colspan="' + colspan + '" class="table-empty">No results found for "<strong>' + input.value + '</strong>".</td>'
+        emptyRow.innerHTML = '<td colspan="' + colspan + '" class="table-empty">No results match your search or filters.</td>'
         tbody.appendChild(emptyRow)
       }
+    }
+
+    // Hook search input
+    input.addEventListener('input', applyFilters)
+
+    // Hook filter selects
+    filterSelects.forEach(sel => {
+      sel.addEventListener('change', applyFilters)
     })
   })
 }

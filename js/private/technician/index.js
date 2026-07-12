@@ -31,6 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initSidebarNavigation()
   initSidebarToggle()
   initLogout()
+  initTechSearchAndFilters()
   loadTechIssues()
   loadMaintenanceDropdown()
   initMaintenanceForm()
@@ -452,6 +453,54 @@ async function handleSaveMaintenance() {
     submitBtn.textContent = 'Save Maintenance Record'
     submitBtn.disabled = false
   }
+}
+
+/* --- Tech Issues Search & Filter --- */
+
+function initTechSearchAndFilters() {
+  const input = document.getElementById('tech-issue-search')
+  const statusFilter = document.getElementById('tech-filter-status')
+  const priorityFilter = document.getElementById('tech-filter-priority')
+  const tbody = document.getElementById('tech-issues-body')
+  if (!input || !tbody) return
+
+  function applyFilters() {
+    const term = input.value.trim().toLowerCase()
+    const statusVal = statusFilter?.value?.toLowerCase() || ''
+    const priorityVal = priorityFilter?.value?.toLowerCase() || ''
+    const rows = Array.from(tbody.querySelectorAll('tr'))
+
+    const prevEmpty = tbody.querySelector('tr.empty-search-result')
+    if (prevEmpty) prevEmpty.remove()
+
+    let visibleCount = 0
+    rows.forEach(row => {
+      if (row.querySelector('td[colspan]')) { row.style.display = 'none'; return }
+      let show = true
+      if (term && !row.textContent.toLowerCase().includes(term)) show = false
+      if (show && statusVal) {
+        const statusCell = row.querySelector('td:nth-child(4)')
+        if (statusCell && statusCell.textContent.toLowerCase().trim() !== statusVal) show = false
+      }
+      if (show && priorityVal) {
+        const priorityCell = row.querySelector('td:nth-child(3)')
+        if (priorityCell && priorityCell.textContent.toLowerCase().trim() !== priorityVal) show = false
+      }
+      row.style.display = show ? '' : 'none'
+      if (show) visibleCount++
+    })
+
+    if (visibleCount === 0 && (term || statusVal || priorityVal)) {
+      const emptyRow = document.createElement('tr')
+      emptyRow.className = 'empty-search-result'
+      emptyRow.innerHTML = '<td colspan="5" class="tech-table-empty">No issues match your search or filters.</td>'
+      tbody.appendChild(emptyRow)
+    }
+  }
+
+  input.addEventListener('input', applyFilters)
+  if (statusFilter) statusFilter.addEventListener('change', applyFilters)
+  if (priorityFilter) priorityFilter.addEventListener('change', applyFilters)
 }
 
 /* --- Logout --- */

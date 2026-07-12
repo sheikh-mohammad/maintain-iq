@@ -129,6 +129,29 @@
           <a href="../../index.html" class="btn btn-primary">Back to Home</a>
         </div>
 
+        <!-- Search & Filter Toolbar -->
+        <div class="public-assets-toolbar">
+          <input type="text" class="public-search-input" id="public-asset-search" placeholder="Search assets..." />
+          <select class="public-filter-select" id="public-filter-status">
+            <option value="">All Statuses</option>
+            <option value="Operational">Operational</option>
+            <option value="Issue Reported">Issue Reported</option>
+            <option value="Under Inspection">Under Inspection</option>
+            <option value="Under Maintenance">Under Maintenance</option>
+            <option value="Out of Service">Out of Service</option>
+            <option value="Retired">Retired</option>
+          </select>
+          <select class="public-filter-select" id="public-filter-category">
+            <option value="">All Categories</option>
+            <option value="AV Equipment">AV Equipment</option>
+            <option value="HVAC">HVAC</option>
+            <option value="Plumbing">Plumbing</option>
+            <option value="Electrical">Electrical</option>
+            <option value="Furniture">Furniture</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+
         <!-- Assets Grid -->
         <div class="public-assets-grid" id="assets-grid" style="display:none;"></div>
 
@@ -162,6 +185,14 @@
               <div class="detail-meta-item">
                 <label>Condition</label>
                 <span id="detail-asset-condition">—</span>
+              </div>
+              <div class="detail-meta-item">
+                <label>Last Service</label>
+                <span id="detail-asset-last-service">—</span>
+              </div>
+              <div class="detail-meta-item">
+                <label>Next Service</label>
+                <span id="detail-asset-next-service">—</span>
               </div>
             </div>
 

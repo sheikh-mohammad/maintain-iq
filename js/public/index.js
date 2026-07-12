@@ -97,6 +97,9 @@ function populateAssetDetail(asset) {
   const techEl = document.getElementById('detail-asset-tech')
   if (techEl) techEl.style.display = 'none'
 
+  // Service dates from maintenance_records
+  loadServiceDates(asset)
+
   const statusEl = document.getElementById('detail-asset-status')
   const statusClass = asset.status === 'Operational' ? 'badge-emerald'
     : asset.status === 'Issue Reported' ? 'badge-orange'
@@ -113,6 +116,28 @@ function populateAssetDetail(asset) {
   qrContainer.innerHTML = ''
   const url = `${window.location.origin}/pages/public/assets.html#${asset.assetCode}`
   new QRCode(qrContainer, { text: url, width: 150, height: 150 })
+}
+
+/* ── Load service dates for asset detail ──────────────────────────────── */
+
+async function loadServiceDates(asset) {
+  const { data: records } = await supabase
+    .from('maintenance_records')
+    .select('completed_at, next_service_date')
+    .eq('asset_id', asset.assetCode)
+    .order('created_at', { ascending: false })
+    .limit(1)
+
+  const lastSvcEl = document.getElementById('detail-asset-last-service')
+  const nextSvcEl = document.getElementById('detail-asset-next-service')
+  if (records && records.length > 0) {
+    const r = records[0]
+    if (lastSvcEl) lastSvcEl.textContent = r.completed_at ? new Date(r.completed_at).toLocaleDateString() : '—'
+    if (nextSvcEl) nextSvcEl.textContent = r.next_service_date ? new Date(r.next_service_date).toLocaleDateString() : '—'
+  } else {
+    if (lastSvcEl) lastSvcEl.textContent = '—'
+    if (nextSvcEl) nextSvcEl.textContent = '—'
+  }
 }
 
 async function loadAssetHistory(assetCode) {
@@ -197,11 +222,48 @@ async function loadAllAssets() {
     return
   }
 
+  // Fetch maintenance records for service dates
+  const { data: maintenanceRecords } = await supabase
+    .from('maintenance_records')
+    .select('asset_id, completed_at, next_service_date, status')
+    .order('created_at', { ascending: false })
+
+  // Build a map of assetCode -> latest maintenance data
+  const serviceDateMap = {}
+  if (maintenanceRecords) {
+    maintenanceRecords.forEach(r => {
+      const key = String(r.asset_id)
+      if (!serviceDateMap[key]) {
+        serviceDateMap[key] = {
+          lastServiceDate: r.completed_at || null,
+          nextServiceDate: r.next_service_date || null,
+        }
+      }
+    })
+  }
+
+  // Fetch issue counts per asset for activity summary
+  const { data: allIssues } = await supabase
+    .from('issues')
+    .select('assetId, status')
+    .order('created_at', { ascending: false })
+
+  const issueCountMap = {}
+  if (allIssues) {
+    allIssues.forEach(i => {
+      const key = String(i.assetId)
+      if (!issueCountMap[key]) issueCountMap[key] = { total: 0, open: 0 }
+      issueCountMap[key].total++
+      if (i.status !== 'Resolved' && i.status !== 'Closed') issueCountMap[key].open++
+    })
+  }
+
   grid.style.display = 'grid'
 
   const scannedCode = window.location.hash.replace('#', '').trim()
 
   grid.innerHTML = assets.map(a => {
+    const code = String(a.assetCode)
     const isRetired = a.status === 'Retired'
 
     const statusClass = a.status === 'Operational' ? 'badge-emerald'
@@ -212,12 +274,27 @@ async function loadAllAssets() {
       : a.status === 'Retired' ? 'badge-gray'
       : 'badge-red'
 
-    const isHighlighted = scannedCode && String(a.assetCode) === scannedCode
+    const svc = serviceDateMap[code]
+    const lastSvc = svc?.lastServiceDate ? new Date(svc.lastServiceDate).toLocaleDateString() : '—'
+    const nextSvc = svc?.nextServiceDate ? new Date(svc.nextServiceDate).toLocaleDateString() : '—'
+
+    const activity = issueCountMap[code]
+    let activityHtml = ''
+    if (activity && activity.total > 0) {
+      const icon = activity.open > 0
+        ? '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fb923c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1zM4 22v-7"/></svg>'
+        : '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>'
+      activityHtml = `<div class="public-asset-activity">${icon}${activity.total} issue(s) — ${activity.open} open</div>`
+    } else {
+      activityHtml = `<div class="public-asset-activity" style="color:var(--text-gray-600);">No activity recorded</div>`
+    }
+
+    const isHighlighted = scannedCode && code === scannedCode
 
     // Report issue button or retired notice
     let actionHtml
     if (isRetired) {
-      actionHtml = `<span class="public-asset-retired-notice">This asset is retired and cannot accept new issues.</span>`
+      actionHtml = `<span class="public-asset-retired-notice">This asset is retired</span>`
     } else if (isLoggedIn) {
       actionHtml = `<button class="btn btn-primary report-issue-btn" data-code="${a.assetCode}" data-name="${a.name}">Report Issue</button>`
     } else {
@@ -225,20 +302,24 @@ async function loadAllAssets() {
     }
 
     return `
-      <div class="public-asset-card ${isHighlighted ? 'highlighted' : ''}" data-code="${a.assetCode}">
+      <div class="public-asset-card ${isHighlighted ? 'highlighted' : ''}" data-code="${a.assetCode}" data-status="${a.status}" data-category="${a.category || ''}">
         <div class="public-asset-top">
           <div class="public-asset-info">
-            <h3>${a.name}</h3>
-            <span class="public-asset-code">Code: ${a.assetCode}</span>
+            <h3>${escHtml(a.name)}</h3>
+            <span class="public-asset-code">Code: ${escHtml(a.assetCode)}</span>
           </div>
           <span class="badge ${statusClass}">${a.status}</span>
         </div>
 
-        <div class="public-asset-meta">
-          <span><strong>Category:</strong> ${a.category || '—'}</span>
-          <span><strong>Location:</strong> ${a.location || '—'}</span>
-          <span><strong>Condition:</strong> ${a.condition || '—'}</span>
+        <div class="public-asset-details">
+          <div><span class="detail-label">Category</span><span class="detail-value">${escHtml(a.category || '—')}</span></div>
+          <div><span class="detail-label">Location</span><span class="detail-value">${escHtml(a.location || '—')}</span></div>
+          <div><span class="detail-label">Condition</span><span class="detail-value">${escHtml(a.condition || '—')}</span></div>
+          <div><span class="detail-label">Last Service</span><span class="detail-value ${lastSvc === '—' ? 'muted' : ''}">${lastSvc}</span></div>
+          <div><span class="detail-label">Next Service</span><span class="detail-value ${nextSvc === '—' ? 'muted' : ''}">${nextSvc}</span></div>
         </div>
+
+        ${activityHtml}
 
         <div class="public-asset-qr" id="qr-${a.assetCode}"></div>
 
@@ -247,36 +328,85 @@ async function loadAllAssets() {
     `
   }).join('')
 
-  // Generate QR codes
+  // Generate QR codes & highlight
   let highlightedEl = null
+  const assetCodes = assets.map(a => a.assetCode)
 
-  assets.forEach(a => {
-    const container = document.querySelector(`#qr-${a.assetCode}`)
+  assetCodes.forEach(code => {
+    const container = document.querySelector(`#qr-${code}`)
     if (!container) return
 
-    const url = `${window.location.origin}/pages/public/assets.html#${a.assetCode}`
-    new QRCode(container, { text: url, width: 130, height: 130 })
+    const url = `${window.location.origin}/pages/public/assets.html#${code}`
+    new QRCode(container, { text: url, width: 120, height: 120 })
 
-    if (scannedCode && String(a.assetCode) === scannedCode) {
-      highlightedEl = document.querySelector(`.public-asset-card[data-code="${a.assetCode}"]`)
+    if (scannedCode && String(code) === scannedCode) {
+      highlightedEl = document.querySelector(`.public-asset-card[data-code="${code}"]`)
     }
   })
 
   // Scroll to highlighted asset from QR scan
   if (highlightedEl) {
-    setTimeout(() => {
-      highlightedEl.scrollIntoView({ behavior: 'smooth', block: 'center' })
-    }, 400)
+    setTimeout(() => { highlightedEl.scrollIntoView({ behavior: 'smooth', block: 'center' }) }, 400)
   }
 
   // Attach report issue handlers
   document.querySelectorAll('.report-issue-btn').forEach(btn => {
     btn.addEventListener('click', () => {
-      const code = btn.dataset.code
-      const name = btn.dataset.name
-      openReportModal(code, name)
+      openReportModal(btn.dataset.code, btn.dataset.name)
     })
   })
+
+  // Init search/filter
+  initPublicSearchAndFilters()
+}
+
+function escHtml(str) {
+  const d = document.createElement('div')
+  d.textContent = str
+  return d.innerHTML
+}
+
+/* ── Public assets search & filter ─────────────────────────────────────── */
+
+function initPublicSearchAndFilters() {
+  const input = document.getElementById('public-asset-search')
+  const statusFilter = document.getElementById('public-filter-status')
+  const categoryFilter = document.getElementById('public-filter-category')
+  if (!input) return
+
+  function applyFilters() {
+    const term = input.value.trim().toLowerCase()
+    const statusVal = statusFilter?.value?.toLowerCase() || ''
+    const catVal = categoryFilter?.value?.toLowerCase() || ''
+    const cards = document.querySelectorAll('.public-asset-card')
+    let visibleCount = 0
+
+    cards.forEach(card => {
+      let show = true
+      if (term && !card.textContent.toLowerCase().includes(term)) show = false
+      if (show && statusVal && (card.dataset.status || '').toLowerCase() !== statusVal) show = false
+      if (show && catVal && (card.dataset.category || '').toLowerCase() !== catVal) show = false
+      card.style.display = show ? '' : 'none'
+      if (show) visibleCount++
+    })
+
+    // Show/hide no-results message
+    const existing = document.querySelector('.public-no-results')
+    if (visibleCount === 0 && (term || statusVal || catVal)) {
+      if (!existing) {
+        const msg = document.createElement('div')
+        msg.className = 'public-no-results'
+        msg.textContent = 'No assets match your search or filters.'
+        document.getElementById('assets-grid')?.appendChild(msg)
+      }
+    } else if (existing) {
+      existing.remove()
+    }
+  }
+
+  input.addEventListener('input', applyFilters)
+  if (statusFilter) statusFilter.addEventListener('change', applyFilters)
+  if (categoryFilter) categoryFilter.addEventListener('change', applyFilters)
 }
 
 /* ── Report Issue Modal ──────────────────────────────────────────────────── */
