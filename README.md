@@ -19,6 +19,11 @@
   <img src="https://img.shields.io/badge/JavaScript-F7DF1E?logo=javascript&logoColor=000" alt="JavaScript">
   <img src="https://img.shields.io/badge/Supabase-3FCF8E?logo=supabase&logoColor=fff" alt="Supabase">
   <img src="https://img.shields.io/badge/Chart.js-FF6384?logo=chart.js&logoColor=fff" alt="Chart.js">
+  <img src="https://img.shields.io/badge/Vercel-000000?logo=vercel&logoColor=fff" alt="Vercel">
+</p>
+
+<p align="center">
+  <strong>🔗 <a href="https://maintain-iq-rosy.vercel.app/">maintain-iq-rosy.vercel.app</a></strong>
 </p>
 
 <p align="center">
@@ -275,6 +280,8 @@ npx serve .
 ```
 
 ### 5. Access the app
+
+The project is live at **[maintain-iq-rosy.vercel.app](https://maintain-iq-rosy.vercel.app/)**. For local development:
 
 | Page | URL |
 |------|-----|
