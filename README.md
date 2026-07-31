@@ -178,6 +178,9 @@ maintain-iq/
 │   ├── auth/
 │   │   ├── login.html                  # Sign-in page
 │   │   └── signup.html                 # Account creation page
+│   ├── legal/
+│   │   ├── privacy.html                # Privacy Policy
+│   │   └── terms.html                  # Terms of Service
 │   ├── private/
 │   │   ├── admin/
 │   │   │   └── index.html              # Administrator dashboard

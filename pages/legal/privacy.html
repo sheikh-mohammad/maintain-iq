@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <script>!function(){var t=localStorage.getItem('maintainiq-theme');if(!t&&(t=window.matchMedia('(prefers-color-scheme:light)').matches?'light':'dark'),'light'===t)document.documentElement.setAttribute('data-theme','light')}();</script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Privacy Policy | MaintainIQ</title>
+    <meta name="description" content="MaintainIQ Privacy Policy — what data we collect, how we use it, and your rights." />
+    <link rel="stylesheet" href="../../css/style.css" />
+    <link rel="stylesheet" href="../../css/index.css" />
+    <style>
+      .legal-layout { max-width: 820px; margin: 0 auto; padding: 48px 24px 80px; }
+      .legal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 48px; }
+      .legal-logo { display: inline-flex; align-items: center; gap: 10px; font-weight: 700; font-size: 1.05rem; color: var(--text-white); text-decoration: none; }
+      .legal-title { font-size: 2rem; line-height: 1.15; margin: 0 0 8px; }
+      .legal-updated { color: var(--text-gray-400); font-size: 0.875rem; margin: 0 0 12px; }
+      .legal-lead { color: var(--text-gray-300); line-height: 1.7; margin-bottom: 8px; }
+      .legal-section h2 { font-size: 1.25rem; margin: 32px 0 12px; color: var(--text-white); }
+      .legal-section p, .legal-section li { color: var(--text-gray-300); line-height: 1.7; }
+      .legal-section ul { padding-left: 20px; }
+      .legal-section li { margin-bottom: 8px; }
+      .legal-section a { color: var(--accent-emerald); }
+      .legal-footer { border-top: 1px solid var(--border-light); margin-top: 48px; padding-top: 24px; display: flex; flex-wrap: wrap; gap: 16px; font-size: 0.875rem; color: var(--text-gray-400); }
+      .legal-footer a { color: var(--text-gray-400); text-decoration: none; }
+      .legal-footer a:hover { color: var(--text-white); }
+    </style>
+  </head>
+  <body>
+    <div class="legal-layout">
+      <header class="legal-header">
+        <a href="../../index.html" class="legal-logo">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 22px; height: 22px;">
+            <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+          </svg>
+          MaintainIQ
+        </a>
+        <button class="theme-toggle" aria-label="Switch theme" onclick="toggleTheme()">
+          <svg class="theme-icon-sun" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+          <svg class="theme-icon-moon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+        </button>
+      </header>
+
+      <h1 class="legal-title">Privacy Policy</h1>
+      <p class="legal-updated">Last updated: July 31, 2026</p>
+      <p class="legal-lead">
+        MaintainIQ is an asset maintenance and repair tracking platform. This Privacy Policy explains what
+        information we collect when you use the MaintainIQ service, how we use it, and the choices you have.
+        By using MaintainIQ, you agree to the practices described in this policy.
+      </p>
+
+      <div class="legal-section">
+        <h2>1. Information We Collect</h2>
+        <p>We collect information you provide directly to us and information generated through your use of the service:</p>
+        <ul>
+          <li><strong>Account information</strong> — your name and email address when you create an account or sign in.</li>
+          <li><strong>Data you submit</strong> — asset records, maintenance issues, technician details, and other data you enter while using the platform.</li>
+          <li><strong>Local storage</strong> — we store your session and display preferences (such as light/dark theme) in your browser&rsquo;s local storage.</li>
+        </ul>
+      </div>
+
+      <div class="legal-section">
+        <h2>2. How We Use Information</h2>
+        <p>We use the information we collect to:</p>
+        <ul>
+          <li>Provide, maintain, and improve the MaintainIQ service;</li>
+          <li>Authenticate you and protect your account;</li>
+          <li>Record maintenance history and facilitate issue tracking;</li>
+          <li>Respond to your requests and support inquiries; and</li>
+          <li>Ensure the security and reliability of the service.</li>
+        </ul>
+      </div>
+
+      <div class="legal-section">
+        <h2>3. Data Storage and Security</h2>
+        <p>
+          Your data is stored in managed PostgreSQL databases provided by Supabase and served through
+          Vercel. We use industry-standard practices to protect your data in transit and at rest. We do not
+          sell your personal information. Access to sensitive operations (such as admin functions) is
+          restricted to authorized accounts.
+        </p>
+      </div>
+
+      <div class="legal-section">
+        <h2>4. Cookies and Local Storage</h2>
+        <p>
+          We use local storage for functional purposes only — for example, remembering your theme preference
+          and maintaining your signed-in session. We do not use advertising trackers.
+        </p>
+      </div>
+
+      <div class="legal-section">
+        <h2>5. Third-Party Services</h2>
+        <p>MaintainIQ relies on the following third-party services, each of which has its own privacy policy:</p>
+        <ul>
+          <li><strong>Supabase</strong> — authentication and database hosting.</li>
+          <li><strong>Vercel</strong> — web hosting and delivery.</li>
+          <li><strong>Content delivery networks (jsDelivr, cdnjs)</strong> — serving open-source libraries such as the Supabase JavaScript client, Chart.js, and QR code utilities.</li>
+        </ul>
+      </div>
+
+      <div class="legal-section">
+        <h2>6. Data Retention and Deletion</h2>
+        <p>
+          We retain your data while your account is active. You may request deletion of your account and the
+          data associated with it at any time by contacting us at
+          <a href="mailto:support@maintainiq.com">support@maintainiq.com</a>.
+        </p>
+      </div>
+
+      <div class="legal-section">
+        <h2>7. Your Rights and Choices</h2>
+        <p>
+          You can access and update your account information at any time through your account. Depending on
+          your jurisdiction, you may have the right to access, correct, or delete your personal data, and to
+          object to or restrict certain processing. To exercise any of these rights, contact us at
+          <a href="mailto:support@maintainiq.com">support@maintainiq.com</a>.
+        </p>
+      </div>
+
+      <div class="legal-section">
+        <h2>8. Children&rsquo;s Privacy</h2>
+        <p>
+          MaintainIQ is not directed at children under the age of 13, and we do not knowingly collect personal
+          information from children under 13. If you believe a child has provided us with personal information,
+          please contact us and we will delete it.
+        </p>
+      </div>
+
+      <div class="legal-section">
+        <h2>9. Changes to This Policy</h2>
+        <p>
+          We may update this Privacy Policy from time to time. We will post any changes on this page and update
+          the &ldquo;Last updated&rdquo; date above. Continued use of the service after changes take effect
+          constitutes acceptance of the revised policy.
+        </p>
+      </div>
+
+      <div class="legal-section">
+        <h2>10. Contact Us</h2>
+        <p>
+          If you have questions about this Privacy Policy, please contact us at
+          <a href="mailto:support@maintainiq.com">support@maintainiq.com</a>.
+        </p>
+      </div>
+
+      <footer class="legal-footer">
+        <a href="../../index.html">Home</a>
+        <a href="privacy.html">Privacy Policy</a>
+        <a href="terms.html">Terms of Service</a>
+        <span>&copy; 2026 MaintainIQ Inc. All rights reserved.</span>
+      </footer>
+    </div>
+
+    <script type="module" src="../../js/app.js"></script>
+  </body>
+</html>
