@@ -1,0 +1,14 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": null,
+  "buildCommand": "test -n \"$PROJECT_URL\" && test -n \"$PUBLISH_KEY\" && test -n \"$ADMIN_EMAIL\" && echo \"window.PROJECT_URL = '$PROJECT_URL'; window.PUBLISH_KEY = '$PUBLISH_KEY'; window.ADMIN_EMAIL = '$ADMIN_EMAIL';\" > config.js",
+  "outputDirectory": ".",
+  "headers": [
+    {
+      "source": "/config.js",
+      "headers": [
+        { "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate" }
+      ]
+    }
+  ]
+}

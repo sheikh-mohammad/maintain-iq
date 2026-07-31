@@ -3,6 +3,7 @@
    ========================================================================== */
 
 import { requireAdmin, supabase, showToast, createHistoryLog, getTechSession } from '../../auth/auth.js'
+import { ADMIN_EMAIL } from '../../config/config.js'
 
 document.addEventListener('DOMContentLoaded', async () => {
   const ok = await requireAdmin()
@@ -279,7 +280,7 @@ async function loadAssets() {
           asset_code: assetCode,
           asset_name: assetName,
           action: 'Status Changed',
-          actor: 'admin@admin.com',
+          actor: ADMIN_EMAIL,
           detail: `${oldStatus} → ${newStatus}`,
         })
 
@@ -442,7 +443,7 @@ async function handleCreateAsset() {
       asset_code: String(assetCode),
       asset_name: name,
       action: 'Asset Created',
-      actor: 'admin@admin.com',
+      actor: ADMIN_EMAIL,
       detail: `${name} registered in ${category} at ${location}`,
     })
 
@@ -489,7 +490,7 @@ async function handleAssignTechnician() {
     // Log history
     createHistoryLog({
       action: 'Issue Assigned',
-      actor: 'admin@admin.com',
+      actor: ADMIN_EMAIL,
       detail: `Issue assigned to ${techEmail}`,
       issue_id: selectedIssueId,
     })
@@ -1504,7 +1505,7 @@ async function handleCloseIssue(issueId) {
     // Log history
     createHistoryLog({
       action: 'Issue Closed',
-      actor: 'admin@admin.com',
+      actor: ADMIN_EMAIL,
       detail: `Issue #${issueId} closed`,
       issue_id: parseInt(issueId),
     })
@@ -1545,7 +1546,7 @@ async function handleReopenIssue(issueId) {
     // Log history
     createHistoryLog({
       action: 'Issue Reopened',
-      actor: 'admin@admin.com',
+      actor: ADMIN_EMAIL,
       detail: `Issue #${issueId} reopened (reopened ${reopenedCount} time(s))`,
       issue_id: parseInt(issueId),
     })

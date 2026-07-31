@@ -1,3 +1,7 @@
-# config.js contains the Supabase anon key — it's designed to be public
-# and is safe to commit. The example is kept for reference.
-# config.js
+# config.js (project root) is generated at deploy time by the Vercel build
+# command in vercel.json from the PROJECT_URL / PUBLISH_KEY / ADMIN_EMAIL env
+# vars. It is never committed.
+/config.js
+
+# Local Node tooling (not required by this project)
+node_modules/

@@ -172,6 +172,8 @@ The admin **History** page displays a chronologically sorted, colour-coded timel
 ```
 maintain-iq/
 ├── index.html                          # Landing / marketing homepage
+├── config.example.js                   # Local dev template — copy to config.js (gitignored)
+├── vercel.json                         # Build command injects env vars into /config.js
 ├── pages/
 │   ├── auth/
 │   │   ├── login.html                  # Sign-in page
@@ -199,8 +201,8 @@ maintain-iq/
 │   ├── app.js                          # Landing page interactivity + theme toggle
 │   ├── index.js                        # Landing page secondary initialisations
 │   ├── config/
-│   │   ├── config.js                   # Supabase project URL & anon key
-│   │   └── example.config.js           # Example config template
+│   │   ├── config.js                   # Re-exports runtime globals (window.PROJECT_URL, …)
+│   │   └── example.config.js           # Pointer to the root config.example.js flow
 │   ├── auth/
 │   │   ├── auth.js                     # Core module: Supabase client, session, toasts,
 │   │   │                               #   route guards, navbar/drawer user menu, history helper
@@ -248,24 +250,28 @@ You need your own Supabase project for the backend:
 1. Create a project at [supabase.com](https://supabase.com)
 2. Set up the database tables listed in the [Database Schema](#database-schema) section below
 3. Create a public storage bucket named `maintenance-evidence`
-4. Copy `js/config/example.config.js` to `js/config/config.js` and fill in your credentials:
+4. Add these **Vercel environment variables** (Project → Settings → Environment Variables, for both Production and Preview):
+   - `PROJECT_URL` — your Supabase project URL (e.g. `https://your-project-id.supabase.co`)
+   - `PUBLISH_KEY` — your Supabase publishable key
+   - `ADMIN_EMAIL` — the email that identifies the admin account (see step 3)
 
-```js
-const PROJECT_URL = "https://your-project-id.supabase.co";
-const PUBLISH_KEY = "your-supabase-anon-key";
-
-export { PROJECT_URL, PUBLISH_KEY };
-```
+On Vercel, the build command in `vercel.json` reads these variables and generates `/config.js` at deploy time, so **no credentials are committed to this repo** — the real values never appear in the source code.
 
 ### 3. Seed an admin account
 
 In your Supabase dashboard, under **Authentication > Users**, create a user with:
-- **Email:** `admin@admin.com`
+- **Email:** the email you set as `ADMIN_EMAIL` (e.g. `admin@admin.com`)
 - **Password:** (your chosen password)
 
 The app identifies administrators by this exact email address.
 
 ### 4. Serve the site
+
+**Local config:** for local development, copy `config.example.js` to `config.js` in the project root and fill in your real values (that file is gitignored, so it won't be committed):
+
+```bash
+cp config.example.js config.js
+```
 
 Since this project uses ES modules (`type="module"`), it **must** be served via an HTTP server — opening `index.html` from the filesystem (`file://`) will fail with CORS errors.
 
@@ -288,7 +294,7 @@ The project is live at **[maintain-iq-rosy.vercel.app](https://maintain-iq-rosy.
 | Landing page | `http://localhost:5500` |
 | Sign In | `http://localhost:5500/pages/auth/login.html` |
 | Sign Up | `http://localhost:5500/pages/auth/signup.html` |
-| Admin Dashboard | Sign in as `admin@admin.com` — redirects automatically |
+| Admin Dashboard | Sign in as your `ADMIN_EMAIL` — redirects automatically |
 | Public Assets | `http://localhost:5500/pages/public/assets.html` |
 | QR Scan Link | `http://localhost:5500/pages/public/assets.html#<assetCode>` |
 

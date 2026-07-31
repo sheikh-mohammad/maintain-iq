@@ -4,7 +4,7 @@
    Load this on EVERY page — it auto-inits and updates the navbar.
    ========================================================================== */
 
-import { PROJECT_URL, PUBLISH_KEY } from '../config/config.js'
+import { PROJECT_URL, PUBLISH_KEY, ADMIN_EMAIL } from '../config/config.js'
 
 const { createClient } = window.supabase
 export const supabase = createClient(PROJECT_URL, PUBLISH_KEY)
@@ -15,7 +15,7 @@ const TECH_SESSION_KEY = 'maintainiq-tech-session'
 /* ── Admin check ───────────────────────────────────────────────────────── */
 
 export function isAdmin(user) {
-  return user?.email === 'admin@admin.com'
+  return user?.email === ADMIN_EMAIL
 }
 
 /* ── Toast notifications ──────────────────────────────────────────────── */

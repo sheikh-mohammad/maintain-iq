@@ -3,6 +3,7 @@
    ========================================================================== */
 
 import { supabase, showToast } from './auth.js'
+import { ADMIN_EMAIL } from '../config/config.js'
 
 const TECH_SESSION_KEY = 'maintainiq-tech-session'
 
@@ -80,7 +81,7 @@ async function handleLogin(e) {
     showToast('Signed in successfully!', 'success')
 
     // 3. Redirect based on role
-    if (data.user?.email === 'admin@admin.com') {
+    if (data.user?.email === ADMIN_EMAIL) {
       setTimeout(() => { window.location.href = '/pages/private/admin/index.html' }, 200)
     } else {
       setTimeout(() => { window.location.href = '/' }, 200)
